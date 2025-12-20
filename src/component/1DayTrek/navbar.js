@@ -1,6 +1,8 @@
 'use client';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { usePathname } from "next/navigation";
+
 export default function Navbar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const isMobile = useMediaQuery('(max-width: 640px)');
@@ -18,6 +20,14 @@ export default function Navbar() {
 
         return matches
     }
+
+    const pathname = usePathname();
+    const linkClass = (path) =>
+    pathname === path
+      ? "text-orange-600 font-semibold border-b-2 border-orange-600"
+      : "text-white hover:text-orange-600 transition-colors";
+
+
     return (
         <>
             {/* NAVBAR */}
@@ -38,12 +48,12 @@ export default function Navbar() {
                 {/* Desktop menu */}
                 {!isMobile && (
                     <div className="hidden md:flex items-center gap-8 pb-5">
-                        <ul className="flex gap-8 items-center text-lg font-rubik text-white">
-                            <a href='/'> Home </a>
-                            <a href='/package'> Tour Packages</a>
-                            <a href='/Contact'>Contact</a>
-                            <a href='/Career'>Career</a>
-                            <a href='/AboutUs'>About Us</a>
+                        <ul className="flex gap-8 items-center text-lg font-rubik text-white font-semibold">
+                            <a href='/' className="text-amber-500 underline" > Home </a>
+                            <a href='/package' className={linkClass('/package')} > Tour Packages</a>
+                            <a href='/Contact' className={linkClass('/package')}>Contact</a>
+                            <a href='/Career' className={linkClass('/package')}>Career</a>
+                            <a href='/AboutUs' className={linkClass('/package')}>About Us</a>
                         </ul>
                     </div>
                 )}

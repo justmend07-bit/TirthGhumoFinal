@@ -15,7 +15,7 @@ export default function PackagesPage() {
   };
 
   return (
-    <div className="p-5 m-20">
+    <div className="p-5 ">
       <Navbar />
       <Hero onSearch={handleSearchResults} />
       <PackageSection data={filteredPackages} />

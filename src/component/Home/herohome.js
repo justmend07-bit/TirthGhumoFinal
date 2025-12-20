@@ -66,6 +66,8 @@ export default function HeroCarousel() {
   const isMobile = useMediaQuery('(max-width: 640px)') // mobile breakpoint
   const [drawerOpen, setDrawerOpen] = useState(false)
 
+  
+
   return (
     <div className="relative w-full min-h-[720px] font-rubik text-white">
       {/* Background hero image wrapper (fixed-size div, overflow hidden) */}
@@ -98,7 +100,7 @@ export default function HeroCarousel() {
             </button>
 
             <nav>
-              <ul className="flex flex-col gap-4 text-xl">
+              <ul className="flex flex-col gap-4 text-xl ">
                 <a href='/'> Home </a> 
                 <a href='/package'> Tour Packages</a>
                 <a href='/Contact'>Contact</a>
@@ -119,35 +121,35 @@ export default function HeroCarousel() {
 
       {/* Big headline (headline-wrapper adjusted responsively) */}
       <div className="max-w-6xl mx-auto px-8 pt-8 md:pt-24 lg:pt-36 relative z-40 headline-wrapper">
-        <h1 className="text-6xl md:text-7xl lg:text-9xl leading-tight drop-shadow-md ">TIRTH GHUMO</h1>
-        <p className="mt-6 text-2xl md:text-3xl">AASTHA BHI, SUVIDHA BHI.</p>
+        <h1 className="text-6xl md:text-7xl lg:text-9xl leading-tight drop-shadow-md font-semi">TIRTH GHUMO</h1>
+        <p className="mt-6 text-2xl md:text-3xl font-semibold">AASTHA BHI, SUVIDHA BHI.</p>
       </div>
 
       
       {!isMobile ? (
         <div
-          className={`absolute z-50 right-8 lg:right-20 top-[30%] w-64 md:w-72 rounded-2xl shadow-2xl overflow-hidden ${cardVisible ? 'animate-cardSlideFade' : 'opacity-0'}`}
+          className={`absolute z-50 right-8 lg:right-20 top-[30%] w-54 md:w-72 rounded-2xl shadow-2xl overflow-hidden ${cardVisible ? 'animate-cardSlideFade' : 'opacity-0'}`}
           style={{ perspective: '1000px' }}
         >
           <div className="relative w-full h-[380px] md:h-[420px] ">
-            <Image src="/images/VR/vr.png" alt="trek" fill style={{ objectFit: 'cover' }} />
+            <Image src="/images/VR/vr.png" alt="trek" fill style={{ objectFit: 'cover' }} className='' />
           </div>
 
-          <div className="absolute left-4 top-4 font-sans  font-bold text-2xl leading-tight">
-            VR Darshan
+          <div className="absolute left-4 top-4 font-bold text-xl leading-tight text-amber-300">
+            Divya Drishti - 360° VR Darshan
             <br />
             
           </div>
         </div>
       ) : (
         /* Mobile stacked card - flows below the headline */
-        <div className={`relative max-w-3xl mx-auto mt-8 px-4 ${cardVisible ? 'animate-cardSlideFade' : 'opacity-0'}`}>
-          <div className="rounded-2xl overflow-hidden shadow-2xl">
-            <div className="relative w-full h-[240px]">
+        <div className={`relative max-w-75 mx-auto mt-8 px-4 ${cardVisible ? 'animate-cardSlideFade' : 'opacity-0'}`}>
+          <div className="rounded-xl overflow-hidden shadow-2xl">
+            <div className="relative w-75 h-60">
               <Image src="/images/VR/vr.png" alt="trek" fill style={{ objectFit: 'cover' }} />
             </div>
-            <div className="p-4 bg-black/30">
-              <div className="text-amber-400 font-bold text-2xl">VR Darshan</div>
+            <div className="p-4 bg-black/50 w-75">
+              <div className="text-amber-400 font-bold text-2xl  ">Divya Drishti - 360° VR Darshan</div>
               {/* <div className="text-white mt-2">STARTING ₹739</div> */}
             </div>
           </div>
@@ -158,15 +160,15 @@ export default function HeroCarousel() {
       {!isMobile ? (
         <div className={`absolute z-60 right-12 lg:right-35 bottom-12 ${cardVisible ? 'animate-bookFade' : 'opacity-0'}`}>
           <a href='/VR' > 
-          <button className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 mb-20 cursor-pointer rounded-full shadow-2xl uppercase tracking-wider" >
+          <button className="bg-amber-500 hover:bg-amber-600 font-semibold text-white px-6 py-3 mb-15 cursor-pointer rounded-2xl shadow-2xl uppercase tracking-wider" >
             Book Now
           </button>
           </a>
         </div>
       ) : (
-        <div className={`max-w-3xl mx-auto mt-6 px-4 ${cardVisible ? 'animate-bookFade' : 'opacity-0'}`}>
+        <div className={`max-w-3xl mx-auto mt-6 w-full flex justify-center px-4 ${cardVisible ? 'animate-bookFade' : 'opacity-0'}`}>
           <a href='/VR' >
-          <button className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-full shadow-2xl w-full uppercase tracking-wider">
+          <button className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-2xl shadow-2xl w-45 uppercase tracking-wider mb-5">
             Book Now
           </button>
           </a>

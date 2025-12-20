@@ -1,7 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, X, Calendar, Upload, Trash2 } from 'lucide-react';
+import { Plus, X, Upload, Trash2 } from 'lucide-react';
+
+/* ------------------ CONSTANTS ------------------ */
+
+const CHARGE_PER_PERSON = 39;
 
 const spiritualPlaces = {
   "Jyotirlingas": [
@@ -30,45 +34,18 @@ const spiritualPlaces = {
     "YAMUNOTRI",
     "BADRINATH"
   ],
-  "Ramayana & Krishna Circuit": [
-    "ORCHHA RAM VIVAH",
-    "AYODHYA (DEEPOTSAV)",
-    "RAAM MANDIR AYODHYA",
-    "CHITRAKOOT",
-    "BANKE BIHARI",
-    "RADHA RAMAN JI TEMPLE",
-    "SHREE GOPAL MANDIR"
-  ],
-  "Hanuman Temples": [
-    "SHRI HANUMAN ART",
-    "BADE HANUMAN JI"
-  ],
-  "Other Prominent Temples": [
-    "SHRI CHINTAMAN GANESH MANDIR",
-    "SHRI BHARTRIHARI GUFA",
-    "SHRI BAGESHWAR DHAM",
-    "GANPATI PULE",
-    "SHRI KHADHARANA GANESH MANDIR",
-    "SHRI CHHIND DHAM MANDIR",
-    "SHRI MANGALNATH MANDIR",
-    "SHRI KAALBHAIRAV"
-  ],
-  "Ashrams & Spiritual Sites": [
-    "SHRI SANDIPANI ASHRAM",
-    "RAMGHAT",
-    "SPIRITUAL JOURNEY OF NARMADA"
-  ],
-  "Festivals & Events": [
-    "MAHA KUMBH MELA 2025",
-    "SHREE JAGANNATH RATH YATRA"
-  ]
 };
 
-
+/* ------------------ COMPONENT ------------------ */
 
 const DevoteeRegistration = () => {
+  const router = useRouter();
 
-  const Backend = process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/booking';
+  const PriceBackend =
+    process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/price';
+
+  const QRBackend =
+    process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/generate-qr';
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -87,44 +64,12 @@ const DevoteeRegistration = () => {
   const [specialRequest, setSpecialRequest] = useState('');
   const [showTnC, setShowTnC] = useState(false);
 
-  const router = useRouter();
-
-  const [bookedSlots, setBookedSlots] = useState({});
-  const [loadingSlots, setLoadingSlots] = useState(false);
-
-  useEffect(() => {
-    if (!selectedDate || !place) return;
-
-    const fetchBookedSlots = async () => {
-      try {
-        setLoadingSlots(true);
-
-        const res = await fetch(
-          `/api/booked-slots?place=${place}&date=${selectedDate}`
-        );
-
-        if (!res.ok) throw new Error("Failed to fetch slots");
-
-        const data = await res.json();
-        setBookedSlots(data);
-      } catch (err) {
-        console.error("Error fetching booked slots:", err);
-        setBookedSlots({});
-      } finally {
-        setLoadingSlots(false);
-      }
-    };
-
-    fetchBookedSlots();
-  }, [selectedDate, place]);
-
-
-  const CHARGE_PER_PERSON = 39; // ₹39 per person
+  /* ------------------ HELPERS ------------------ */
 
   const addDevotee = () => {
     setDevotees([
       ...devotees,
-      { id: Date.now(), name: '', age: '', gender: '', aadhar: '', aadharImage: null }
+      { id: Date.now(), name: '', age: '', gender: '', aadhar: '', aadharImage: null, disability: false }
     ]);
   };
 
@@ -135,57 +80,30 @@ const DevoteeRegistration = () => {
   };
 
   const updateDevotee = (id, field, value) => {
-    setDevotees(devotees.map(d =>
-      d.id === id ? { ...d, [field]: value } : d
-    ));
+    setDevotees(devotees.map(d => d.id === id ? { ...d, [field]: value } : d));
   };
 
   const handleImageUpload = (id, file) => {
     if (!file) return;
-
     if (file.size > 10 * 1024 * 1024) {
       alert('File size should be less than 10MB');
       return;
     }
-
-    // ✅ STORE FILE DIRECTLY
     updateDevotee(id, 'aadharImage', file);
   };
 
+  /* ------------------ CHARGES ------------------ */
 
-  const isWeekend = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDay();
-    return day === 0 || day === 6;
-  };
-
-  const isSlotBooked = (date, timeSlot) => {
-    return bookedSlots[date]?.includes(timeSlot) || false;
-  };
-
-  const handleTimeSlotClick = (timeSlot) => {
-    if (!selectedDate) {
-      alert('Please select a date first');
-      return;
-    }
-    if (isSlotBooked(selectedDate, timeSlot)) {
-      return;
-    }
-    setSelectedTime(timeSlot);
-  };
-
-  // Calculate charges based on age and disability
   const calculateCharges = () => {
     let chargeableDevotees = 0;
     let freeDevotees = 0;
+    let peopleBelow60 = 0;
 
-    devotees.forEach(devotee => {
-      const age = parseInt(devotee.age);
-      const isSenior = age >= 60;
-      const isDisabled = devotee.disability;
+    devotees.forEach(d => {
+      const age = parseInt(d.age);
+      if (age < 60) peopleBelow60++;
 
-      // Free if senior citizen (60+) OR disabled
-      if (isSenior || isDisabled) {
+      if (age >= 60 || d.disability) {
         freeDevotees++;
       } else {
         chargeableDevotees++;
@@ -195,107 +113,103 @@ const DevoteeRegistration = () => {
     return {
       chargeableDevotees,
       freeDevotees,
+      peopleBelow60,
       totalCharge: chargeableDevotees * CHARGE_PER_PERSON
     };
   };
 
   const charges = calculateCharges();
 
-  const checkSlotAvailability = async () => {
-    const res = await fetch(
-      `/api/booked-slots?place=${place}&date=${selectedDate}`
-    );
-    const data = await res.json();
+  /* ------------------ API CALLS ------------------ */
 
-    return !data[selectedDate]?.includes(selectedTime);
+  const sendPeopleBelow60 = async (count) => {
+    const res = await fetch(
+      `${PriceBackend}?number_of_persons=${count}`,
+      { method: 'GET' }
+    );
+
+    if (!res.ok) throw new Error('Price API failed');
+    return res.json();
+  };
+
+  const fetchQRCode = async () => {
+    const res = await fetch(QRBackend, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: charges.totalCharge,
+        place,
+        date: selectedDate,
+        time: selectedTime,
+      }),
+    });
+
+    if (!res.ok) throw new Error('QR generation failed');
+    const data = await res.json();
+    return data.qrCode;
+  };
+
+  /* ------------------ SUBMIT ------------------ */
+
+  const handleProceedToPay = async () => {
+    try {
+      setSubmitting(true);
+
+      // 1️⃣ Send ONLY people below 60
+      await sendPeopleBelow60(charges.peopleBelow60);
+
+      // 2️⃣ Get QR code
+      const qrCode = await fetchQRCode();
+
+      // 3️⃣ Save everything locally
+      localStorage.setItem(
+        'vrDarshanRegistration',
+        JSON.stringify({
+          place,
+          selectedDate,
+          selectedTime,
+          contactNumber,
+          whatsappNumber,
+          email,
+          address,
+          devotees,
+          charges,
+          totalAmount: charges.totalCharge,
+          qrCode,
+          specialRequest,
+        })
+      );
+
+      // 4️⃣ Redirect
+      router.push('/vr-darshan/payment');
+
+    } catch (err) {
+      console.error(err);
+      alert('Failed to proceed to payment');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
 
-  const handleSubmit = async () => {
-  if (submitting) return;
-  setSubmitting(true);
+/* ------------------ SLOT HELPERS ------------------ */
 
-  try {
-    // ---------- VALIDATION ----------
-    for (const d of devotees) {
-      if (!d.name || !d.age || !d.gender || !d.aadhar || !d.aadharImage) {
-        alert('Fill all devotee details including Aadhar image');
-        setSubmitting(false);
-        return;
-      }
-    }
+// Weekend check (Saturday = 6, Sunday = 0)
+const isWeekend = (dateString) => {
+  if (!dateString) return false;
+  const day = new Date(dateString).getDay();
+  return day === 0 || day === 6;
+};
 
-    if (!contactNumber || contactNumber.length !== 10) {
-      alert('Invalid contact number');
-      setSubmitting(false);
-      return;
-    }
+// Slot booking check (TEMP: nothing is booked)
+const isSlotBooked = (date, timeSlot) => {
+  return false;
+};
 
-    if (!email || !place || !selectedDate || !selectedTime) {
-      alert('Missing required fields');
-      setSubmitting(false);
-      return;
-    }
-
-    // ---------- FORMDATA ----------
-    const formData = new FormData();
-
-    formData.append('contact_number', contactNumber);
-    formData.append('whatsapp_number', whatsappNumber);
-    formData.append('email_address', email);
-
-    formData.append('spiritual_place', place);
-    formData.append('preferred_date', selectedDate);
-    formData.append('time_slot', selectedTime);
-    formData.append('special_request', specialRequest || '');
-
-    const devoteesPayload = devotees.map(d => ({
-      name: d.name,
-      age: d.age,
-      gender: d.gender,
-      aadhar: d.aadhar,
-      disability: d.disability
-    }));
-
-    formData.append('devotees', JSON.stringify(devoteesPayload));
-
-    devotees.forEach(d => {
-      formData.append('aadhar_images', d.aadharImage); // ✅ File object
-    });
-
-    const response = await fetch(Backend, {
-      method: 'POST',
-      body: formData
-    });
-
-    if (!response.ok) {
-      const err = await response.text();
-      console.error('Backend error:', err);
-      alert(err);
-      return;
-    }
-
-    const data = await response.json();
-
-    if (!data.success) {
-      alert(data.message || 'Booking failed');
-      return;
-    }
-
-    sessionStorage.setItem('paymentSuccess', 'true');
-
-    if (!data.paymentRequired || data.totalAmount === 0) {
-      router.push(`/vr-darshan/success?bookingId=${data.bookingId}`);
-    } else {
-      router.push(`/vr-darshan/payment?orderId=${data.orderId}`);
-    }
-
-  } catch (err) {
-    console.error('Submit error:', err);
-    alert('Unexpected error');
-  } finally {
-    setSubmitting(false);
-  }
+// Slot selection
+const handleTimeSlotClick = (timeSlot) => {
+  if (!selectedDate) return;
+  setSelectedTime(timeSlot);
 };
 
 
@@ -855,7 +769,7 @@ const DevoteeRegistration = () => {
             {/* Submit Button */}
             <div className="flex justify-center pt-2">
               <button
-                onClick={handleSubmit}
+                onClick={handleProceedToPay}
                 disabled={submitting}
                 className={`w-full sm:w-auto px-8 sm:px-10 py-3 font-semibold rounded-lg shadow-lg transition-all
       ${submitting

@@ -574,52 +574,52 @@ export default function RegistrationPage() {
                             </div>
 
                         </div>
-                        
+
                     </div>
 
                 ))}
-                
+
                 {showTermsModal && activeTravellerIndex !== null && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-    <div className="bg-white max-w-2xl w-full rounded-xl shadow-xl overflow-hidden">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+                        <div className="bg-white max-w-2xl w-full rounded-xl shadow-xl overflow-hidden">
 
-      <div className="flex justify-between items-center px-6 py-4 border-b">
-        <h2 className="text-lg font-bold text-gray-900">
-          Terms & Conditions
-        </h2>
-        <button
-          onClick={() => setShowTermsModal(false)}
-          className="text-gray-500 hover:text-red-600"
-        >
-          ✕
-        </button>
-      </div>
+                            <div className="flex justify-between items-center px-6 py-4 border-b">
+                                <h2 className="text-lg font-bold text-gray-900">
+                                    Terms & Conditions
+                                </h2>
+                                <button
+                                    onClick={() => setShowTermsModal(false)}
+                                    className="text-gray-500 hover:text-red-600"
+                                >
+                                    ✕
+                                </button>
+                            </div>
 
-      <div className="px-6 py-4 max-h-[60vh] overflow-y-auto text-sm text-gray-700 space-y-4">
-        {/* terms text */}
-      </div>
+                            <div className="px-6 py-4 max-h-[60vh] overflow-y-auto text-sm text-gray-700 space-y-4">
+                                {/* terms text */}
+                            </div>
 
-      <div className="flex justify-end gap-3 px-6 py-4 border-t">
-        <button
-          onClick={() => setShowTermsModal(false)}
-          className="px-4 py-2 rounded-lg bg-gray-100"
-        >
-          Close
-        </button>
-        <button
-          onClick={() => {
-            updateTraveller(activeTravellerIndex, "terms_accepted", true);
-            setShowTermsModal(false);
-          }}
-          className="px-4 py-2 rounded-lg bg-orange-600 text-white font-semibold"
-        >
-          Accept
-        </button>
-      </div>
+                            <div className="flex justify-end gap-3 px-6 py-4 border-t">
+                                <button
+                                    onClick={() => setShowTermsModal(false)}
+                                    className="px-4 py-2 rounded-lg bg-gray-100"
+                                >
+                                    Close
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        updateTraveller(activeTravellerIndex, "terms_accepted", true);
+                                        setShowTermsModal(false);
+                                    }}
+                                    className="px-4 py-2 rounded-lg bg-orange-600 text-white font-semibold"
+                                >
+                                    Accept
+                                </button>
+                            </div>
 
-    </div>
-  </div>
-)}
+                        </div>
+                    </div>
+                )}
 
 
                 <button
