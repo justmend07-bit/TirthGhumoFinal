@@ -69,7 +69,7 @@ const spiritualPlaces = {
 const DevoteeRegistration = () => {
 
   const Backend = process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/booking';
-  console.log('Backend URL:', Backend);
+
   const [submitting, setSubmitting] = useState(false);
 
   const [devotees, setDevotees] = useState([

@@ -24,6 +24,7 @@ export default function RegistrationPage() {
 
     const [activeTravellerIndex, setActiveTravellerIndex] = useState(null);
 
+    const Backend = process.env.NEXT_PUBLIC_BACKEND_URL + '/tamia';
 
     const [travellers, setTravellers] = useState([emptyTraveller]);
     const [submitting, setSubmitting] = useState(false);
@@ -232,7 +233,7 @@ export default function RegistrationPage() {
             // Add JSON data to FormData
             formData.append('data', JSON.stringify(payload));
 
-            const res = await fetch("http://localhost:8000/api/bookings", {
+            const res = await fetch(Backend, {
                 method: "POST",
                 body: formData,
             });
