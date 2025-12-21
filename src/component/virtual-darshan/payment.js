@@ -1,111 +1,162 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import {
-  Download, Upload, CheckCircle, Clock, User, MapPin,
-  Calendar, IndianRupee, Phone, Mail, X, AlertCircle
+    Download, Upload, CheckCircle, Clock, User, MapPin,
+    Calendar, IndianRupee, Phone, Mail, X, AlertCircle
 } from 'lucide-react';
 
 const PaymentPage = () => {
-  const [registrationData, setRegistrationData] = useState(null);
-  const [qrCode, setQrCode] = useState(null);
-  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
+    const router = useRouter();
 
-  const Backend =
-    process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/booking';
+    const [registrationData, setRegistrationData] = useState(null);
+    const [qrCode, setQrCode] = useState(null);
+    const [paymentScreenshot, setPaymentScreenshot] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
 
-  /* ---------------- LOAD FROM LOCAL STORAGE ---------------- */
+    const Backend =
+        process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/booking';
 
-  useEffect(() => {
-    const stored = localStorage.getItem('vrDarshanRegistration');
+    /* ---------------- LOAD FROM LOCAL STORAGE ---------------- */
 
-    if (!stored) {
-      setError('Registration data not found. Please start again.');
-      setLoading(false);
-      return;
-    }
+    useEffect(() => {
+        const stored = localStorage.getItem('vrDarshanRegistration');
 
-    const parsed = JSON.parse(stored);
-    setRegistrationData(parsed);
-    setQrCode(parsed.qrCode);
-    setLoading(false);
-  }, []);
+        if (!stored) {
+            setError('Registration data not found. Please start again.');
+            setLoading(false);
+            return;
+        }
 
-  /* ---------------- SCREENSHOT UPLOAD ---------------- */
+        try {
+            const parsed = JSON.parse(stored);
+            setRegistrationData(parsed);
+            setQrCode(parsed.qrCode);
+            setLoading(false);
+        } catch (err) {
+            setError('Invalid registration data. Please start again.');
+            setLoading(false);
+        }
+    }, []);
 
-  const handleScreenshotUpload = (file) => {
-    if (!file || file.size > 10 * 1024 * 1024) {
-      setError('File size should be less than 10MB');
-      return;
-    }
+    /* ---------------- SCREENSHOT UPLOAD ---------------- */
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPaymentScreenshot(reader.result);
-      setError('');
+    const handleScreenshotUpload = (file) => {
+        if (!file) {
+            setError('Please select a file');
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            setError('File size should be less than 10MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPaymentScreenshot(reader.result);
+            setError('');
+        };
+        reader.onerror = () => {
+            setError('Failed to read file');
+        };
+        reader.readAsDataURL(file);
     };
-    reader.readAsDataURL(file);
-  };
 
-  /* ---------------- DOWNLOAD QR ---------------- */
+    /* ---------------- DOWNLOAD QR ---------------- */
 
-  const downloadQR = () => {
-    const link = document.createElement('a');
-    link.href = qrCode;
-    link.download = 'VR-Darshan-QR.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    const downloadQR = () => {
+        if (!qrCode) {
+            setError('QR code not available');
+            return;
+        }
 
-  /* ---------------- SUBMIT FINAL DATA ---------------- */
+        const link = document.createElement('a');
+        link.href = qrCode;
+        link.download = 'VR-Darshan-QR.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
-  const handleSubmitPayment = async () => {
-    if (!paymentScreenshot || !registrationData) {
-      setError('Missing payment or registration data');
-      return;
-    }
+    /* ---------------- SUBMIT FINAL DATA ---------------- */
 
-    setSubmitting(true);
-    setError('');
+    const handleSubmitPayment = async () => {
+        if (!paymentScreenshot) {
+            setError('Please upload payment screenshot');
+            return;
+        }
 
-    try {
-      const formData = new FormData();
+        if (!registrationData) {
+            setError('Registration data not found');
+            return;
+        }
 
-      // registration data
-      formData.append(
-        'registrationData',
-        JSON.stringify(registrationData)
-      );
+        setSubmitting(true);
+        setError('');
 
-      // convert base64 screenshot → file
-      const res = await fetch(paymentScreenshot);
-      const blob = await res.blob();
-      formData.append('paymentScreenshot', blob, 'payment.png');
+        try {
+            const formData = new FormData();
 
-      const response = await fetch(Backend, {
-        method: 'POST',
-        body: formData,
-      });
+            // Prepare devotees data - convert aadharImage File objects to base64 if needed
+            const devoteesData = await Promise.all(
+                registrationData.devotees.map(async (devotee) => {
+                    if (devotee.aadharImage instanceof File) {
+                        const base64 = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(devotee.aadharImage);
+                        });
+                        return { ...devotee, aadharImage: base64 };
+                    }
+                    return devotee;
+                })
+            );
 
-      if (!response.ok) {
-        throw new Error('Payment submission failed');
-      }
+            // Registration data with converted images
+            const dataToSend = {
+                ...registrationData,
+                devotees: devoteesData,
+            };
 
-      setShowSuccess(true);
+            formData.append('registrationData', JSON.stringify(dataToSend));
 
-      // cleanup
-      localStorage.removeItem('vrDarshanRegistration');
-    } catch (err) {
-      console.error(err);
-      setError('Failed to submit payment');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+            // Convert base64 screenshot → blob
+            const res = await fetch(paymentScreenshot);
+            const blob = await res.blob();
+            formData.append('paymentScreenshot', blob, 'payment.png');
+
+            const response = await fetch(Backend, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Payment submission failed');
+            }
+
+            const result = await response.json();
+
+            setShowSuccess(true);
+
+            // Cleanup localStorage
+            localStorage.removeItem('vrDarshanRegistration');
+
+            // Redirect to success page after 2 seconds
+            setTimeout(() => {
+                router.push('/VR/success');
+            }, 2000);
+
+        } catch (err) {
+            console.error('Payment submission error:', err);
+            setError(err.message || 'Failed to submit payment. Please try again.');
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
 
     if (loading) {
@@ -333,7 +384,7 @@ const PaymentPage = () => {
                                 Upload Payment Proof *
                             </h2>
 
-                             {!paymentScreenshot ? (
+                            {!paymentScreenshot ? (
                                 <label className="flex flex-col items-center justify-center border-3 border-dashed border-orange-300 rounded-xl p-8 cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-all">
                                     <Upload className="w-12 h-12 text-orange-500 mb-3" />
                                     <p className="text-sm font-semibold text-slate-700 mb-1">Upload Screenshot</p>

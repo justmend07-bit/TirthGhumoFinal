@@ -38,14 +38,13 @@ const spiritualPlaces = {
 
 /* ------------------ COMPONENT ------------------ */
 
+/* ------------------ COMPONENT ------------------ */
+
 const DevoteeRegistration = () => {
   const router = useRouter();
 
   const PriceBackend =
     process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/price';
-
-  const QRBackend =
-    process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/generate-qr';
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -129,24 +128,8 @@ const DevoteeRegistration = () => {
     );
 
     if (!res.ok) throw new Error('Price API failed');
-    return res.json();
-  };
-
-  const fetchQRCode = async () => {
-    const res = await fetch(QRBackend, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: charges.totalCharge,
-        place,
-        date: selectedDate,
-        time: selectedTime,
-      }),
-    });
-
-    if (!res.ok) throw new Error('QR generation failed');
     const data = await res.json();
-    return data.qrCode;
+    return data; 
   };
 
   /* ------------------ SUBMIT ------------------ */
@@ -155,13 +138,11 @@ const DevoteeRegistration = () => {
     try {
       setSubmitting(true);
 
-      // 1️⃣ Send ONLY people below 60
-      await sendPeopleBelow60(charges.peopleBelow60);
+      // 1️⃣ Send ONLY people below 60 and get QR code from response
+      const priceResponse = await sendPeopleBelow60(charges.peopleBelow60);
+      const qrCode = priceResponse.qrCode; // Extract QR code URL from response
 
-      // 2️⃣ Get QR code
-      const qrCode = await fetchQRCode();
-
-      // 3️⃣ Save everything locally
+      // 2️⃣ Save everything locally
       localStorage.setItem(
         'vrDarshanRegistration',
         JSON.stringify({
@@ -180,8 +161,8 @@ const DevoteeRegistration = () => {
         })
       );
 
-      // 4️⃣ Redirect
-      router.push('/vr-darshan/payment');
+      // 3️⃣ Redirect
+      router.push('/VR/payment');
 
     } catch (err) {
       console.error(err);
