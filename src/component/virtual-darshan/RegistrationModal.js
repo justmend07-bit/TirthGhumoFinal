@@ -40,7 +40,7 @@ const spiritualPlaces = {
 
 /* ------------------ COMPONENT ------------------ */
 
-const DevoteeRegistration = () => {
+export default function DevoteeRegistration() {
   const router = useRouter();
 
   const PriceBackend =
@@ -772,4 +772,3 @@ const handleTimeSlotClick = (timeSlot) => {
   );
 };
 
-export default DevoteeRegistration;
