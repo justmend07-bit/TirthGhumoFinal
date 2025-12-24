@@ -81,35 +81,39 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
       const formDataToSend = new FormData();
 
       // Personal Info
-      formDataToSend.append('full_name', formData.full_name);
-      formDataToSend.append('email_address', formData.email_address);
-      formDataToSend.append('phone_number', formData.phone_number);
-      formDataToSend.append('date_of_birth', formData.date_of_birth);
-      formDataToSend.append('gender', formData.gender || '');
-      formDataToSend.append('current_city', formData.current_city);
-      formDataToSend.append('education_qualification', formData.education_qualification || '');
-      formDataToSend.append('college_name', formData.college_name || '');
-      formDataToSend.append('school_name', formData.school_name || '');
-
-      // Position
+      formDataToSend.append('full_name', formData.full_name.trim());
+      formDataToSend.append('email_address', formData.email_address.trim());
+      formDataToSend.append('phone_number', formData.phone_number.trim());
+      formDataToSend.append(
+        'date_of_birth',
+        new Date(formData.date_of_birth).toISOString().split('T')[0]
+      );
+      formDataToSend.append('current_city', formData.current_city.trim());
       formDataToSend.append('position_applied', formData.position_applied);
-      formDataToSend.append('why_this_role', formData.why_this_role);
+      formDataToSend.append('why_this_role', formData.why_this_role.trim());
+      formDataToSend.append('why_should_we_hire_you', formData.why_should_we_hire_you.trim());
+      formDataToSend.append('key_skills', formData.key_skills.trim());
 
-      // Experience
-      formDataToSend.append('worked_in_travel_company', formData.worked_in_travel_company);
-      formDataToSend.append('previous_travel_role', formData.previous_travel_role || '');
-      formDataToSend.append('travel_expertise_rating', formData.travel_expertise_rating || '');
-      formDataToSend.append('managed_group_trips', formData.managed_group_trips);
-      formDataToSend.append('comfortable_24x7', formData.comfortable_24x7);
-      formDataToSend.append('why_should_we_hire_you', formData.why_should_we_hire_you);
-      formDataToSend.append('referral_source', formData.referral_source || '');
-      formDataToSend.append('agreement_confirmed', formData.agreement_confirmed);
-      formDataToSend.append('linkedin_profile', formData.linkedin_profile || '');
-      formDataToSend.append('portfolio_url', formData.portfolio_url || '');
+      const bool = (v) => (v ? "true" : "false");
 
-      // Multi-value fields
-      formDataToSend.append('key_skills', formData.key_skills);
-      formDataToSend.append('work_proof_link', formData.work_proof_link || '');
+      formDataToSend.append('worked_in_travel_company', bool(formData.worked_in_travel_company));
+      formDataToSend.append('managed_group_trips', bool(formData.managed_group_trips));
+      formDataToSend.append('comfortable_24x7', bool(formData.comfortable_24x7));
+      formDataToSend.append('agreement_confirmed', bool(formData.agreement_confirmed));
+
+      if (formData.travel_expertise_rating) {
+        formDataToSend.append(
+          'travel_expertise_rating',
+          String(formData.travel_expertise_rating)
+        );
+      }
+
+      const formattedWorkProofs = formData.work_proof_link
+        ? formData.work_proof_link.split(',').map(v => v.trim()).join('\n')
+        : '';
+
+      formDataToSend.append('work_proof_link', formattedWorkProofs);
+
 
       // Files
       formDataToSend.append('resume_file', resumeFile);
