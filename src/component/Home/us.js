@@ -73,7 +73,7 @@ export default function WhyChooseUs() {
               key={c.title}
               // when `visible` becomes true we add the animation class,
               // each card has inline animationDelay for the stagger
-              className={`card-panel transform opacity-0 translate-y-6 hover:shadow-lg rounded-2xl p-5  ${visible ? 'animate-slideUpFade' : ''
+                className={`card-panel transform opacity-0 translate-y-6 hover:shadow-lg rounded-2xl p-5  ${visible ? 'animate-slideUpFade' : ''
                 }`}
               style={{ animationDelay: `${i * 400}ms` }} // stagger: 0ms,200ms,400ms
             >

@@ -75,7 +75,7 @@ export default function HeroSection({ onSearch = () => {} }) {
           >
             Discover Your Next
             <span className="block bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent mt-1 sm:mt-2">
-              Great Adventure
+              Great Tirth
             </span>
           </h1>
 
@@ -84,7 +84,7 @@ export default function HeroSection({ onSearch = () => {} }) {
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
-            Curated luxury travel experiences for the discerning explorer
+            
           </p>
 
           {/* Search Box - Fully Responsive */}

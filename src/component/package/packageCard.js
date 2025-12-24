@@ -14,7 +14,7 @@ export default function PackageCard({ pkg }) {
         
         {/* Price Badge */}
         <div className="absolute top-3 right-3 sm:top-4 sm:right-4 rounded-full bg-amber-500 px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-lg">
-          ${pkg.price || '999'}
+          {pkg.price || '999'}
         </div>
 
         {/* Rating */}
@@ -43,10 +43,10 @@ export default function PackageCard({ pkg }) {
             <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0" />
             <span className="truncate">{pkg.duration || '7 Days'}</span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
+          {/* <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
             <Users className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0" />
-            <span className="truncate">{pkg.groupSize || 'Max 12'}</span>
-          </div>
+            <span className="truncate">{pkg.groupSize || ''}</span>
+          </div> */}
         </div>
 
         {/* Description */}

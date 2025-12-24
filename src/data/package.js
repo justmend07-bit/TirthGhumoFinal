@@ -21,7 +21,7 @@ const packages = [
     tags: [ "Special Tents", "Meals Included"],
     price: "₹6,700",
     available: true,
-    url: "/tamia/Register",
+    url: "/tamia",
   },
   // {
   //   id: 3,
