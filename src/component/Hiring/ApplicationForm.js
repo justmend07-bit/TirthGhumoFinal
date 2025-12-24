@@ -17,13 +17,13 @@ const positions = [
 const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
 const idProofTypes = ['Aadhaar Card', 'PAN Card', 'Passport', 'Driving License', 'Voter ID'];
 
-export default function ApplicationForm({ isOpen = true, onClose = () => {}, selectedPosition = '' }) {
+export default function ApplicationForm({ isOpen = true, onClose = () => { }, selectedPosition = '' }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
   const [idProofFile, setIdProofFile] = useState(null);
-  
+
   const HiringBackendURL = process.env.NEXT_PUBLIC_BACKEND_URL + '/hiring/apply';
 
   const [formData, setFormData] = useState({
@@ -37,11 +37,11 @@ export default function ApplicationForm({ isOpen = true, onClose = () => {}, sel
     education_qualification: '',
     college_name: '',
     school_name: '',
-    
+
     // Position
     position_applied: selectedPosition || '',
     why_this_role: '',
-    
+
     // Experience
     worked_in_travel_company: false,
     previous_travel_role: '',
@@ -53,11 +53,11 @@ export default function ApplicationForm({ isOpen = true, onClose = () => {}, sel
     agreement_confirmed: false,
     linkedin_profile: '',
     portfolio_url: '',
-    
+
     // Multi-value fields
     key_skills: '',
     work_proof_link: '',
-    
+
     // ID Proof
     id_proof_type: '',
   });
@@ -79,7 +79,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => {}, sel
       }
 
       const formDataToSend = new FormData();
-      
+
       // Personal Info
       formDataToSend.append('full_name', formData.full_name);
       formDataToSend.append('email_address', formData.email_address);
@@ -90,11 +90,11 @@ export default function ApplicationForm({ isOpen = true, onClose = () => {}, sel
       formDataToSend.append('education_qualification', formData.education_qualification || '');
       formDataToSend.append('college_name', formData.college_name || '');
       formDataToSend.append('school_name', formData.school_name || '');
-      
+
       // Position
       formDataToSend.append('position_applied', formData.position_applied);
       formDataToSend.append('why_this_role', formData.why_this_role);
-      
+
       // Experience
       formDataToSend.append('worked_in_travel_company', formData.worked_in_travel_company);
       formDataToSend.append('previous_travel_role', formData.previous_travel_role || '');
@@ -106,11 +106,11 @@ export default function ApplicationForm({ isOpen = true, onClose = () => {}, sel
       formDataToSend.append('agreement_confirmed', formData.agreement_confirmed);
       formDataToSend.append('linkedin_profile', formData.linkedin_profile || '');
       formDataToSend.append('portfolio_url', formData.portfolio_url || '');
-      
+
       // Multi-value fields
       formDataToSend.append('key_skills', formData.key_skills);
       formDataToSend.append('work_proof_link', formData.work_proof_link || '');
-      
+
       // Files
       formDataToSend.append('resume_file', resumeFile);
       formDataToSend.append('id_proof_type', formData.id_proof_type);
@@ -127,23 +127,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => {}, sel
       }
 
       setIsSuccess(true);
-      setTimeout(() => {
-        onClose();
-        setIsSuccess(false);
-        // Reset form
-        setFormData({
-          full_name: '', email_address: '', phone_number: '', date_of_birth: '',
-          gender: '', current_city: '', education_qualification: '', college_name: '',
-          school_name: '', position_applied: '', why_this_role: '',
-          worked_in_travel_company: false, previous_travel_role: '',
-          travel_expertise_rating: '', managed_group_trips: false,
-          comfortable_24x7: false, why_should_we_hire_you: '', referral_source: '',
-          agreement_confirmed: false, linkedin_profile: '', portfolio_url: '',
-          key_skills: '', work_proof_link: '', id_proof_type: '',
-        });
-        setResumeFile(null);
-        setIdProofFile(null);
-      }, 2000);
+
     } catch (err) {
       setError(err?.message || 'Failed to submit application');
     } finally {
@@ -172,16 +156,59 @@ export default function ApplicationForm({ isOpen = true, onClose = () => {}, sel
           </div>
 
           {isSuccess ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
                 <Check className="w-10 h-10 text-green-600" />
               </div>
+
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 Application Submitted!
               </h3>
-              <p className="text-gray-600">
+
+              <p className="text-gray-600 mb-8">
                 We'll review your application and get back to you soon.
               </p>
+
+              <button
+                onClick={() => {
+                  setIsSuccess(false);
+                  onClose();
+
+                  // reset form here if you want
+                  setFormData({
+                    full_name: '',
+                    email_address: '',
+                    phone_number: '',
+                    date_of_birth: '',
+                    gender: '',
+                    current_city: '',
+                    education_qualification: '',
+                    college_name: '',
+                    school_name: '',
+                    position_applied: '',
+                    why_this_role: '',
+                    worked_in_travel_company: false,
+                    previous_travel_role: '',
+                    travel_expertise_rating: '',
+                    managed_group_trips: false,
+                    comfortable_24x7: false,
+                    why_should_we_hire_you: '',
+                    referral_source: '',
+                    agreement_confirmed: false,
+                    linkedin_profile: '',
+                    portfolio_url: '',
+                    key_skills: '',
+                    work_proof_link: '',
+                    id_proof_type: '',
+                  });
+
+                  setResumeFile(null);
+                  setIdProofFile(null);
+                }}
+                className="px-8 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition"
+              >
+                Done
+              </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-8">

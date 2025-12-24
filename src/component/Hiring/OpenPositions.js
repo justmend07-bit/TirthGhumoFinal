@@ -3,9 +3,24 @@ import { useScrollAnimation } from '@/Hooks/useScrollAnimation';
 
 const positions = [
   {
+    title: 'Graphic Designer',
+    summary:
+      'Design compelling visual assets for our travel platform and marketing campaigns.',
+  },
+  {
     title: 'Next.js Developer',
     summary:
-      'Build scalable web applications using Next.js, React, and TypeScript for our travel platform.',
+      'Build scalable web applications using Next.js, React, and JavaScript for our travel platform.',
+  },
+  {
+    title: 'Backend Developer (FastAPI)',
+    summary:
+      'Build robust APIs and services powering our travel technology infrastructure.',
+  },
+  {
+    title: 'Content Creator / Social Media Manager',
+    summary:
+      'Tell our story and engage our community through compelling content and social media.',
   },
   {
     title: 'Flutter Developer',
@@ -42,16 +57,8 @@ const positions = [
     summary:
       'Create and manage high-performing campaigns across Facebook and Instagram.',
   },
-  {
-    title: 'Backend Developer (FastAPI / Node.js)',
-    summary:
-      'Build robust APIs and services powering our travel technology infrastructure.',
-  },
-  {
-    title: 'Content Creator / Social Media Manager',
-    summary:
-      'Tell our story and engage our community through compelling content and social media.',
-  },
+  
+  
 ];
 
 
