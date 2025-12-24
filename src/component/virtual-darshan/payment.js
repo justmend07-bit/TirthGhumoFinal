@@ -87,79 +87,116 @@ const PaymentPage = () => {
     /* ---------------- SUBMIT FINAL DATA ---------------- */
 
     const handleSubmitPayment = async () => {
-        if (!paymentScreenshot) {
-            setError('Please upload payment screenshot');
-            return;
-        }
+    if (!paymentScreenshot) {
+        setError('Please upload payment screenshot');
+        return;
+    }
 
-        if (!registrationData) {
-            setError('Registration data not found');
-            return;
-        }
+    if (!registrationData) {
+        setError('Registration data not found');
+        return;
+    }
 
-        setSubmitting(true);
-        setError('');
+    setSubmitting(true);
+    setError('');
 
-        try {
-            const formData = new FormData();
+    try {
+        const formData = new FormData();
 
-            // Prepare devotees data - convert aadharImage File objects to base64 if needed
-            const devoteesData = await Promise.all(
-                registrationData.devotees.map(async (devotee) => {
-                    if (devotee.aadharImage instanceof File) {
-                        const base64 = await new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onloadend = () => resolve(reader.result);
-                            reader.readAsDataURL(devotee.aadharImage);
-                        });
-                        return { ...devotee, aadharImage: base64 };
-                    }
-                    return devotee;
-                })
+        // 1. Append scalar fields with exact backend field names
+        formData.append('contact_number', registrationData.contactNumber);
+        formData.append('whatsapp_number', registrationData.whatsappNumber);
+        formData.append('email_address', registrationData.email);
+        formData.append('spiritual_place', registrationData.place);
+        
+        // 2. Format date as YYYY-MM-DD (backend expects this format)
+        const formattedDate = new Date(registrationData.selectedDate)
+            .toISOString()
+            .split('T')[0];
+        formData.append('preferred_date', formattedDate);
+        
+        formData.append('time_slot', registrationData.selectedTime);
+        formData.append('special_request', registrationData.specialRequest || '');
+
+        // 3. Prepare devotees array (only metadata, no images)
+        const devoteesMetadata = registrationData.devotees.map(devotee => ({
+            full_name: devotee.name,
+            age: devotee.age,
+            gender: devotee.gender,
+            address: devotee.address || registrationData.address
+        }));
+        
+        // 4. Send devotees as JSON string (backend expects Form field with JSON)
+        formData.append('devotees', JSON.stringify(devoteesMetadata));
+
+        // 5. Convert base64 Aadhaar images back to File objects
+        // CRITICAL: Must match devotees array order exactly
+        for (let i = 0; i < registrationData.devotees.length; i++) {
+            const devotee = registrationData.devotees[i];
+            
+            // Convert base64/data URL to Blob, then to File
+            const base64Data = devotee.aadharImage;
+            const response = await fetch(base64Data);
+            const blob = await response.blob();
+            
+            // Create File with meaningful name (backend reads as UploadFile)
+            const aadharFile = new File(
+                [blob], 
+                `aadhar_${i + 1}_${devotee.name.replace(/\s+/g, '_')}.jpg`,
+                { type: 'image/jpeg' }
             );
-
-            // Registration data with converted images
-            const dataToSend = {
-                ...registrationData,
-                devotees: devoteesData,
-            };
-
-            formData.append('registrationData', JSON.stringify(dataToSend));
-
-            // Convert base64 screenshot → blob
-            const res = await fetch(paymentScreenshot);
-            const blob = await res.blob();
-            formData.append('paymentScreenshot', blob, 'payment.png');
-
-            const response = await fetch(Backend, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Payment submission failed');
-            }
-
-            const result = await response.json();
-
-            setShowSuccess(true);
-
-            // Cleanup localStorage
-            localStorage.removeItem('vrDarshanRegistration');
-
-            // Redirect to success page after 2 seconds
-            setTimeout(() => {
-                router.push('/VR/success');
-            }, 2000);
-
-        } catch (err) {
-            console.error('Payment submission error:', err);
-            setError(err.message || 'Failed to submit payment. Please try again.');
-        } finally {
-            setSubmitting(false);
+            
+            // Append to FormData - backend expects field name 'aadhar_images' (plural)
+            formData.append('aadhar_images', aadharFile);
         }
-    };
+
+        // 6. Convert payment screenshot to File
+        const paymentResponse = await fetch(paymentScreenshot);
+        const paymentBlob = await paymentResponse.blob();
+        const paymentFile = new File(
+            [paymentBlob], 
+            'payment_screenshot.jpg',
+            { type: 'image/jpeg' }
+        );
+        formData.append('payment_screenshot', paymentFile);
+
+        // 7. Submit to backend (NO Content-Type header - browser sets it with boundary)
+        console.log('Submitting payment data...');
+        const apiResponse = await fetch(Backend, {
+            method: 'POST',
+            body: formData,
+            // Do NOT set Content-Type - let browser handle multipart/form-data boundary
+        });
+
+        console.log('API Response status:', apiResponse.status);
+
+        if (!apiResponse.ok) {
+            const errorData = await apiResponse.json().catch(() => null);
+            console.error('API Error:', errorData);
+            throw new Error(errorData?.message || `Server error: ${apiResponse.status}`);
+        }
+
+        const result = await apiResponse.json();
+        console.log('Payment submission successful:', result);
+
+        // Show success message
+        setShowSuccess(true);
+
+        // Clear localStorage
+        localStorage.removeItem('vrDarshanRegistration');
+
+        // Redirect to success page after 2 seconds
+        // setTimeout(() => {
+        //     router.push('/VR');
+        // }, 15000);
+
+    } catch (err) {
+        console.error('Payment submission error:', err);
+        setError(err.message || 'Failed to submit payment. Please try again.');
+    } finally {
+        setSubmitting(false);
+    }
+};
 
     if (loading) {
         return (
@@ -202,7 +239,7 @@ const PaymentPage = () => {
                     <h2 className="text-2xl font-bold text-slate-800 mb-3">Error</h2>
                     <p className="text-slate-600 mb-6">{error}</p>
                     <button
-                        onClick={() => router.push('/VR/registration')}
+                        onClick={() => router.push('/VR')}
                         className="px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700"
                     >
                         Back to Registration
@@ -396,7 +433,7 @@ const PaymentPage = () => {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                                     </svg>
                                                     <p className="font-mono font-bold text-slate-800 text-sm sm:text-base tracking-wide">
-                                                        6260499299@okbizaxis
+                                                        vrdarshan@paytm
                                                     </p>
                                                 </div>
                                             </div>
@@ -418,7 +455,7 @@ const PaymentPage = () => {
                                     </div>
 
                                     {/* Supported Apps */}
-                                    {/* <div className="mb-4">
+                                    <div className="mb-4">
                                         <p className="text-xs text-center text-slate-500 font-medium mb-3">Supported UPI Apps</p>
                                         <div className="flex items-center justify-center gap-4 flex-wrap">
                                             {['Paytm', 'PhonePe', 'GPay', 'BHIM'].map((app) => (
@@ -430,7 +467,7 @@ const PaymentPage = () => {
                                                 </div>
                                             ))}
                                         </div>
-                                    </div> */}
+                                    </div>
 
                                     {/* Download Button */}
                                     <button
