@@ -22,61 +22,57 @@
 html {
   scroll-behavior: smooth;
 }
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family:  var(--font-rubik), Arial, Helvetica, sans-serif;
+  font-family: var(--font-rubik), Arial, Helvetica, sans-serif;
 }
 
 /* ------------------------------
    Global form input fixes
    ------------------------------ */
 
-/* Force input text color */
-input,
+/* TEXT INPUTS ONLY (not checkbox / radio) */
+input:not([type="checkbox"]):not([type="radio"]),
 textarea,
 select {
   color: #000000;
-  -webkit-text-fill-color: #414141; /* Safari / iOS */
   background-color: #ffffff;
+  font-size: 16px; /* Prevent iOS zoom */
 }
 
-
+/* Placeholder color (GRAY everywhere) */
 input::placeholder,
 textarea::placeholder {
   color: #9ca3af; /* Tailwind gray-400 */
-  opacity: 1; /* iOS fix */
+  opacity: 1;
 }
 
-
-/* Placeholder visibility */
-input::placeholder,
-textarea::placeholder {
-  color: #000000; /* Tailwind gray-500 */
-  opacity: 1; /* Fix iOS low-opacity placeholders */
+/* Safari / iOS placeholder fix */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #9ca3af;
 }
 
-/* iOS Safari fixes */
-input,
-textarea,
-select {
-  -webkit-appearance: none;
-  appearance: none;
-  font-size: 16px; /* Prevent iOS zoom on focus */
-  background-color: #ffffff;
+/* Autofill fix */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #000000;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 /* Disabled inputs */
 input:disabled,
 textarea:disabled,
 select:disabled {
-  color: #9ca3af; /* gray-400 */
+  color: #9ca3af;
 }
 
-/* Autofill fix (Chrome / Safari) */
-input:-webkit-autofill,
-textarea:-webkit-autofill,
-select:-webkit-autofill {
-  -webkit-text-fill-color: #000000;
-  transition: background-color 9999s ease-in-out 0s;
+/* ✅ CHECKBOX FIX */
+input[type="checkbox"] {
+  appearance: auto;
+  -webkit-appearance: auto;
+  accent-color: #ea580c; /* orange-600 */
 }

@@ -409,7 +409,8 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                       id="worked_in_travel"
                       checked={formData.worked_in_travel_company}
                       onChange={(e) => setFormData({ ...formData, worked_in_travel_company: e.target.checked })}
-                      className="w-5 h-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                      className="w-5 h-5  accent-orange-600 border-2 border-gray-400  bg-white rounded focus:ring-2 focus:ring-orange-400"
+
                     />
                     <label htmlFor="worked_in_travel" className="text-sm font-semibold text-gray-700">
                       Have you worked in a travel company before?
@@ -454,7 +455,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                       id="managed_trips"
                       checked={formData.managed_group_trips}
                       onChange={(e) => setFormData({ ...formData, managed_group_trips: e.target.checked })}
-                      className="w-5 h-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                      className="w-5 h-5  accent-orange-600 border-2 border-gray-400  bg-white rounded focus:ring-2 focus:ring-orange-400"
                     />
                     <label htmlFor="managed_trips" className="text-sm font-semibold text-gray-700">
                       Have you managed group trips?
@@ -467,7 +468,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                       id="comfortable_24x7"
                       checked={formData.comfortable_24x7}
                       onChange={(e) => setFormData({ ...formData, comfortable_24x7: e.target.checked })}
-                      className="w-5 h-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                      className="w-5 h-5  accent-orange-600 border-2 border-gray-400  bg-white rounded focus:ring-2 focus:ring-orange-400"
                     />
                     <label htmlFor="comfortable_24x7" className="text-sm font-semibold text-gray-700">
                       Are you comfortable with 24x7 availability?
