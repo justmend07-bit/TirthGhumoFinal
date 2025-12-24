@@ -33,8 +33,10 @@ const PaymentPage = () => {
 
         try {
             const parsed = JSON.parse(stored);
+            console.log('Loaded registration data:', parsed);
             setRegistrationData(parsed);
-            setQrCode(parsed.qrCode);
+            // Use payment_qr_url from the stored data
+            setQrCode(parsed.payment_qr_url);
             setLoading(false);
         } catch (err) {
             setError('Invalid registration data. Please start again.');
@@ -159,7 +161,6 @@ const PaymentPage = () => {
         }
     };
 
-
     if (loading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center">
@@ -172,13 +173,6 @@ const PaymentPage = () => {
     }
 
     if (showSuccess) {
-        useEffect(() => {
-            return () => {
-                localStorage.removeItem('vrDarshanRegistration');
-                localStorage.removeItem('paymentSuccess');
-            };
-        }, []);
-
         return (
             <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center p-4">
                 <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md text-center">
@@ -196,7 +190,24 @@ const PaymentPage = () => {
                         Go to Home
                     </button>
                 </div>
+            </div>
+        );
+    }
 
+    if (!registrationData) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-xl shadow-lg p-8 max-w-md text-center">
+                    <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-slate-800 mb-3">Error</h2>
+                    <p className="text-slate-600 mb-6">{error}</p>
+                    <button
+                        onClick={() => router.push('/VR/registration')}
+                        className="px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700"
+                    >
+                        Back to Registration
+                    </button>
+                </div>
             </div>
         );
     }
@@ -210,9 +221,6 @@ const PaymentPage = () => {
                         <h1 className="text-2xl sm:text-3xl font-bold text-white text-center">
                             Complete Your Payment
                         </h1>
-                        <p className="text-orange-100 text-center mt-2 text-sm sm:text-base">
-                            Order ID: <span className="font-semibold">{orderId}</span>
-                        </p>
                     </div>
 
                     {/* Timer/Status Bar */}
@@ -242,7 +250,7 @@ const PaymentPage = () => {
                                         <MapPin className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
                                         <div>
                                             <p className="text-xs text-slate-600 font-medium">Spiritual Place</p>
-                                            <p className="text-sm font-semibold text-slate-800">{registrationData?.place}</p>
+                                            <p className="text-sm font-semibold text-slate-800">{registrationData.place}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-2">
@@ -250,12 +258,12 @@ const PaymentPage = () => {
                                         <div>
                                             <p className="text-xs text-slate-600 font-medium">Date & Time</p>
                                             <p className="text-sm font-semibold text-slate-800">
-                                                {new Date(registrationData?.date).toLocaleDateString('en-IN', {
+                                                {new Date(registrationData.selectedDate).toLocaleDateString('en-IN', {
                                                     weekday: 'short',
                                                     year: 'numeric',
                                                     month: 'short',
                                                     day: 'numeric'
-                                                })} • {registrationData?.timeSlot}
+                                                })} • {registrationData.selectedTime}
                                             </p>
                                         </div>
                                     </div>
@@ -264,25 +272,30 @@ const PaymentPage = () => {
                                 {/* Devotees List */}
                                 <div className="border border-slate-200 rounded-lg p-3">
                                     <p className="text-xs font-semibold text-slate-600 mb-2 uppercase">
-                                        Devotees ({registrationData?.devotees.length})
+                                        Devotees ({registrationData.devotees.length})
                                     </p>
                                     <div className="space-y-2">
-                                        {registrationData?.devotees.map((devotee, idx) => (
-                                            <div key={idx} className="flex items-center justify-between text-sm bg-slate-50 rounded px-2 py-1.5">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center text-xs font-bold text-orange-600">
-                                                        {idx + 1}
+                                        {registrationData.devotees.map((devotee, idx) => {
+                                            const age = parseInt(devotee.age);
+                                            const isFree = age >= 60 || devotee.disability;
+                                            
+                                            return (
+                                                <div key={idx} className="flex items-center justify-between text-sm bg-slate-50 rounded px-2 py-1.5">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center text-xs font-bold text-orange-600">
+                                                            {idx + 1}
+                                                        </div>
+                                                        <span className="font-medium text-slate-800">{devotee.name}</span>
+                                                        <span className="text-xs text-slate-500">({devotee.age}y, {devotee.gender})</span>
                                                     </div>
-                                                    <span className="font-medium text-slate-800">{devotee.name}</span>
-                                                    <span className="text-xs text-slate-500">({devotee.age}y, {devotee.gender})</span>
+                                                    {isFree && (
+                                                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">
+                                                            FREE
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                {devotee.isSeniorCitizen && (
-                                                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">
-                                                        FREE
-                                                    </span>
-                                                )}
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
@@ -290,11 +303,11 @@ const PaymentPage = () => {
                                 <div className="border border-slate-200 rounded-lg p-3 space-y-2">
                                     <div className="flex items-center gap-2 text-sm">
                                         <Phone className="w-4 h-4 text-slate-500" />
-                                        <span className="text-slate-700">{registrationData?.contactNumber}</span>
+                                        <span className="text-slate-700">{registrationData.contactNumber}</span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm">
                                         <Mail className="w-4 h-4 text-slate-500" />
-                                        <span className="text-slate-700 truncate">{registrationData?.email}</span>
+                                        <span className="text-slate-700 truncate">{registrationData.email}</span>
                                     </div>
                                 </div>
                             </div>
@@ -309,13 +322,13 @@ const PaymentPage = () => {
 
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between items-center py-2">
-                                    <span className="text-slate-600">Chargeable Devotees ({registrationData?.charges.chargeableDevotees})</span>
-                                    <span className="font-medium text-slate-800">₹{registrationData?.charges.chargeableDevotees * 39}</span>
+                                    <span className="text-slate-600">Chargeable Devotees ({registrationData.charges.chargeableDevotees})</span>
+                                    <span className="font-medium text-slate-800">₹{registrationData.charges.chargeableDevotees * 39}</span>
                                 </div>
 
-                                {registrationData?.charges.freeDevotees > 0 && (
+                                {registrationData.charges.freeDevotees > 0 && (
                                     <div className="flex justify-between items-center py-2 text-green-700">
-                                        <span>Free (Senior/Disabled) ({registrationData?.charges.freeDevotees})</span>
+                                        <span>Free (Senior/Disabled) ({registrationData.charges.freeDevotees})</span>
                                         <span className="font-medium">₹0</span>
                                     </div>
                                 )}
@@ -323,7 +336,7 @@ const PaymentPage = () => {
                                 <div className="border-t-2 border-slate-200 pt-3 mt-3">
                                     <div className="flex justify-between items-center">
                                         <span className="text-lg font-bold text-slate-800">Total Amount</span>
-                                        <span className="text-2xl font-bold text-orange-600">₹{amount}</span>
+                                        <span className="text-2xl font-bold text-orange-600">₹{registrationData.totalAmount}</span>
                                     </div>
                                 </div>
                             </div>
@@ -332,51 +345,146 @@ const PaymentPage = () => {
 
                     {/* Right Column - Payment QR & Upload */}
                     <div className="space-y-4">
-                        {/* QR Code Section */}
-                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                            <h2 className="text-xl font-bold text-slate-800 mb-4 text-center">
-                                Scan & Pay
-                            </h2>
-
-                            {/* QR Code */}
-                            <div className="bg-gradient-to-br from-orange-100 to-red-100 rounded-xl p-6 mb-4">
-                                <div className="bg-white rounded-lg p-4 inline-block mx-auto shadow-lg" style={{ display: 'block', width: 'fit-content', margin: '0 auto' }}>
-                                    <img
-                                        src={qrCode}
-                                        alt="Payment QR Code"
-                                        className="w-48 h-48 sm:w-56 sm:h-56 mx-auto"
-                                    />
-                                </div>
-
-                                {/* UPI ID */}
-                                {/* <div className="mt-4 text-center">
-                                    <p className="text-xs text-slate-600 font-medium mb-1">UPI ID</p>
-                                    <div className="bg-white rounded-lg px-4 py-2 inline-block shadow">
-                                        <p className="font-mono font-bold text-slate-800 text-sm sm:text-base">{upiId}</p>
-                                    </div>
-                                </div> */}
+                        {/* QR Code Section - Paytm Style */}
+                        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                            {/* Paytm-style Header */}
+                            <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-center">
+                                <h2 className="text-xl font-bold text-white flex items-center justify-center gap-2">
+                                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                                    </svg>
+                                    Scan & Pay
+                                </h2>
+                                <p className="text-blue-50 text-sm mt-1">Using any UPI app</p>
                             </div>
 
-                            {/* Download Button */}
-                            <button
-                                onClick={downloadQR}
-                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-700 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors mb-4"
-                            >
-                                <Download className="w-5 h-5" />
-                                Download QR Code
-                            </button>
+                            {/* QR Code Container */}
+                            {qrCode ? (
+                                <div className="p-6">
+                                    {/* Paytm-style QR Box */}
+                                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 mb-4 border-2 border-blue-200 shadow-inner">
+                                        {/* Amount Display */}
+                                        <div className="text-center mb-4">
+                                            <p className="text-sm text-slate-600 font-medium mb-1">Pay Amount</p>
+                                            <div className="flex items-center justify-center gap-1">
+                                                <IndianRupee className="w-7 h-7 text-blue-600" />
+                                                <span className="text-4xl font-bold text-slate-800">{registrationData.totalAmount}</span>
+                                            </div>
+                                        </div>
 
-                            {/* Payment Instructions */}
-                            {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
-                                <p className="font-semibold text-blue-900 mb-2">Payment Instructions:</p>
-                                <ol className="list-decimal list-inside space-y-1 text-blue-800">
-                                    <li>Scan the QR code using any UPI app</li>
-                                    <li>Or copy the UPI ID and make payment</li>
-                                    <li>Complete the payment of ₹{amount}</li>
-                                    <li>Take a screenshot of payment confirmation</li>
-                                    <li>Upload the screenshot below</li>
-                                </ol>
-                            </div> */}
+                                        {/* QR Code */}
+                                        <div className="bg-white rounded-xl p-5 shadow-lg border-4 border-white relative mx-auto" style={{ width: 'fit-content' }}>
+                                            {/* Corner Decorations */}
+                                            <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-blue-500 rounded-tl-lg"></div>
+                                            <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-blue-500 rounded-tr-lg"></div>
+                                            <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-blue-500 rounded-bl-lg"></div>
+                                            <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-blue-500 rounded-br-lg"></div>
+                                            
+                                            <img
+                                                src={qrCode}
+                                                alt="Payment QR Code"
+                                                className="w-48 h-48 sm:w-56 sm:h-56"
+                                            />
+                                        </div>
+
+                                        {/* UPI ID Section */}
+                                        <div className="mt-4 text-center">
+                                            <p className="text-xs text-slate-500 font-medium mb-2">UPI ID</p>
+                                            <div className="bg-white rounded-lg px-4 py-3 shadow-md border border-blue-200 inline-block">
+                                                <div className="flex items-center gap-2">
+                                                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                    </svg>
+                                                    <p className="font-mono font-bold text-slate-800 text-sm sm:text-base tracking-wide">
+                                                        6260499299@okbizaxis
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Payment Badges */}
+                                        <div className="flex items-center justify-center gap-3 mt-4">
+                                            <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                <span className="text-xs font-semibold text-slate-700">Secure</span>
+                                            </div>
+                                            <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm">
+                                                <svg className="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                                </svg>
+                                                <span className="text-xs font-semibold text-slate-700">Verified</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Supported Apps */}
+                                    {/* <div className="mb-4">
+                                        <p className="text-xs text-center text-slate-500 font-medium mb-3">Supported UPI Apps</p>
+                                        <div className="flex items-center justify-center gap-4 flex-wrap">
+                                            {['Paytm', 'PhonePe', 'GPay', 'BHIM'].map((app) => (
+                                                <div key={app} className="flex flex-col items-center">
+                                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center shadow-sm border border-blue-200">
+                                                        <span className="text-xs font-bold text-blue-700">{app.slice(0, 2)}</span>
+                                                    </div>
+                                                    <span className="text-xs text-slate-600 mt-1 font-medium">{app}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div> */}
+
+                                    {/* Download Button */}
+                                    <button
+                                        onClick={downloadQR}
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition-all shadow-lg mb-4"
+                                    >
+                                        <Download className="w-5 h-5" />
+                                        Download QR Code
+                                    </button>
+
+                                    {/* Payment Instructions */}
+                                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-4 text-sm">
+                                        <div className="flex items-start gap-2 mb-3">
+                                            <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-blue-900 mb-2">How to Pay:</p>
+                                                <ol className="space-y-2 text-blue-800">
+                                                    <li className="flex items-start gap-2">
+                                                        <span className="font-bold min-w-[20px]">1.</span>
+                                                        <span>Open any UPI app (Paytm, PhonePe, GPay, etc.)</span>
+                                                    </li>
+                                                    <li className="flex items-start gap-2">
+                                                        <span className="font-bold min-w-[20px]">2.</span>
+                                                        <span>Scan the QR code above</span>
+                                                    </li>
+                                                    <li className="flex items-start gap-2">
+                                                        <span className="font-bold min-w-[20px]">3.</span>
+                                                        <span>Enter amount ₹{registrationData.totalAmount} and complete payment</span>
+                                                    </li>
+                                                    <li className="flex items-start gap-2">
+                                                        <span className="font-bold min-w-[20px]">4.</span>
+                                                        <span>Take screenshot of payment success</span>
+                                                    </li>
+                                                    <li className="flex items-start gap-2">
+                                                        <span className="font-bold min-w-[20px]">5.</span>
+                                                        <span>Upload screenshot below to confirm</span>
+                                                    </li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="p-6">
+                                    <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                                        <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-2" />
+                                        <p className="text-red-700 font-medium">QR Code not available</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Upload Screenshot Section */}
