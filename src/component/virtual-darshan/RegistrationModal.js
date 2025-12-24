@@ -138,11 +138,11 @@ const DevoteeRegistration = () => {
     try {
       setSubmitting(true);
 
-      // 1️⃣ Send ONLY people below 60 and get QR code from response
+      // Send ONLY people below 60 and get QR code from response
       const priceResponse = await sendPeopleBelow60(charges.peopleBelow60);
-      const qrCode = priceResponse.qrCode; // Extract QR code URL from response
+      const payment_qr_url = priceResponse.payment_qr_url; 
 
-      // 2️⃣ Save everything locally
+      //Save everything locally
       localStorage.setItem(
         'vrDarshanRegistration',
         JSON.stringify({
@@ -156,12 +156,12 @@ const DevoteeRegistration = () => {
           devotees,
           charges,
           totalAmount: charges.totalCharge,
-          qrCode,
+          payment_qr_url,
           specialRequest,
         })
       );
 
-      // 3️⃣ Redirect
+      //Redirect
       router.push('/VR/payment');
 
     } catch (err) {
