@@ -3,7 +3,7 @@ import { useScrollAnimation } from '@/Hooks/useScrollAnimation';
 
 const positions = [
   {
-    title: 'Graphic Designer',
+    title: 'Graphics Designer',
     summary:
       'Design compelling visual assets for our travel platform and marketing campaigns.',
   },

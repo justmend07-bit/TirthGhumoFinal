@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X, Upload, Check } from 'lucide-react';
 
 const positions = [
-  'Graphic Designer',
+  'Graphics Designer',
   'Next.js Developer',
   'Flutter Developer',
   'Android Developer',
