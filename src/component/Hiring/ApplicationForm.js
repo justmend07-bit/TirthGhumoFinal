@@ -174,9 +174,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
       formDataToSend.append('id_proof_type', formData.id_proof_type);
       formDataToSend.append('id_proof_file', idProofFile);
 
-      for (const [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
+      
 
 
       const response = await fetch(HiringBackendURL, {
@@ -188,9 +186,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to submit application');
       }
-      for (const [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
+      
 
       setIsSuccess(true);
 
