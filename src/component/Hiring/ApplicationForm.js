@@ -26,6 +26,30 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
 
   const HiringBackendURL = process.env.NEXT_PUBLIC_BACKEND_URL + '/hiring/apply';
 
+  const Spinner = () => (
+    <svg
+      className="animate-spin h-5 w-5 text-white"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+      />
+    </svg>
+  );
+
+
   const [formData, setFormData] = useState({
     // Personal Info
     full_name: '',
@@ -183,7 +207,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
             </h2>
             <button
               onClick={onClose}
-              className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-black flex items-center justify-center transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -695,7 +719,15 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                   disabled={isSubmitting}
                   className="flex-1 px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                  {isSubmitting ? (
+                    <>
+                      <Spinner />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit Application"
+                  )}
+
                 </button>
               </div>
             </form>

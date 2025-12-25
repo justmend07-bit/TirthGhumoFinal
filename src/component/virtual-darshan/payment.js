@@ -44,6 +44,9 @@ const PaymentPage = () => {
         }
     }, []);
 
+    
+
+
     /* ---------------- SCREENSHOT UPLOAD ---------------- */
 
     const handleScreenshotUpload = (file) => {
@@ -87,116 +90,116 @@ const PaymentPage = () => {
     /* ---------------- SUBMIT FINAL DATA ---------------- */
 
     const handleSubmitPayment = async () => {
-    if (!paymentScreenshot) {
-        setError('Please upload payment screenshot');
-        return;
-    }
+        if (!paymentScreenshot) {
+            setError('Please upload payment screenshot');
+            return;
+        }
 
-    if (!registrationData) {
-        setError('Registration data not found');
-        return;
-    }
+        if (!registrationData) {
+            setError('Registration data not found');
+            return;
+        }
 
-    setSubmitting(true);
-    setError('');
+        setSubmitting(true);
+        setError('');
 
-    try {
-        const formData = new FormData();
+        try {
+            const formData = new FormData();
 
-        // 1. Append scalar fields with exact backend field names
-        formData.append('contact_number', registrationData.contactNumber);
-        formData.append('whatsapp_number', registrationData.whatsappNumber);
-        formData.append('email_address', registrationData.email);
-        formData.append('spiritual_place', registrationData.place);
-        
-        // 2. Format date as YYYY-MM-DD (backend expects this format)
-        const formattedDate = new Date(registrationData.selectedDate)
-            .toISOString()
-            .split('T')[0];
-        formData.append('preferred_date', formattedDate);
-        
-        formData.append('time_slot', registrationData.selectedTime);
-        formData.append('special_request', registrationData.specialRequest || '');
+            // 1. Append scalar fields with exact backend field names
+            formData.append('contact_number', registrationData.contactNumber);
+            formData.append('whatsapp_number', registrationData.whatsappNumber);
+            formData.append('email_address', registrationData.email);
+            formData.append('spiritual_place', registrationData.place);
 
-        // 3. Prepare devotees array (only metadata, no images)
-        const devoteesMetadata = registrationData.devotees.map(devotee => ({
-            full_name: devotee.name,
-            age: devotee.age,
-            gender: devotee.gender,
-            address: devotee.address || registrationData.address
-        }));
-        
-        // 4. Send devotees as JSON string (backend expects Form field with JSON)
-        formData.append('devotees', JSON.stringify(devoteesMetadata));
+            // 2. Format date as YYYY-MM-DD (backend expects this format)
+            const formattedDate = new Date(registrationData.selectedDate)
+                .toISOString()
+                .split('T')[0];
+            formData.append('preferred_date', formattedDate);
 
-        // 5. Convert base64 Aadhaar images back to File objects
-        // CRITICAL: Must match devotees array order exactly
-        for (let i = 0; i < registrationData.devotees.length; i++) {
-            const devotee = registrationData.devotees[i];
-            
-            // Convert base64/data URL to Blob, then to File
-            const base64Data = devotee.aadharImage;
-            const response = await fetch(base64Data);
-            const blob = await response.blob();
-            
-            // Create File with meaningful name (backend reads as UploadFile)
-            const aadharFile = new File(
-                [blob], 
-                `aadhar_${i + 1}_${devotee.name.replace(/\s+/g, '_')}.jpg`,
+            formData.append('time_slot', registrationData.selectedTime);
+            formData.append('special_request', registrationData.specialRequest || '');
+
+            // 3. Prepare devotees array (only metadata, no images)
+            const devoteesMetadata = registrationData.devotees.map(devotee => ({
+                full_name: devotee.name,
+                age: devotee.age,
+                gender: devotee.gender,
+                address: devotee.address || registrationData.address
+            }));
+
+            // 4. Send devotees as JSON string (backend expects Form field with JSON)
+            formData.append('devotees', JSON.stringify(devoteesMetadata));
+
+            // 5. Convert base64 Aadhaar images back to File objects
+            // CRITICAL: Must match devotees array order exactly
+            for (let i = 0; i < registrationData.devotees.length; i++) {
+                const devotee = registrationData.devotees[i];
+
+                // Convert base64/data URL to Blob, then to File
+                const base64Data = devotee.aadharImage;
+                const response = await fetch(base64Data);
+                const blob = await response.blob();
+
+                // Create File with meaningful name (backend reads as UploadFile)
+                const aadharFile = new File(
+                    [blob],
+                    `aadhar_${i + 1}_${devotee.name.replace(/\s+/g, '_')}.jpg`,
+                    { type: 'image/jpeg' }
+                );
+
+                // Append to FormData - backend expects field name 'aadhar_images' (plural)
+                formData.append('aadhar_images', aadharFile);
+            }
+
+            // 6. Convert payment screenshot to File
+            const paymentResponse = await fetch(paymentScreenshot);
+            const paymentBlob = await paymentResponse.blob();
+            const paymentFile = new File(
+                [paymentBlob],
+                'payment_screenshot.jpg',
                 { type: 'image/jpeg' }
             );
-            
-            // Append to FormData - backend expects field name 'aadhar_images' (plural)
-            formData.append('aadhar_images', aadharFile);
+            formData.append('payment_screenshot', paymentFile);
+
+            // 7. Submit to backend (NO Content-Type header - browser sets it with boundary)
+            console.log('Submitting payment data...');
+            const apiResponse = await fetch(Backend, {
+                method: 'POST',
+                body: formData,
+                // Do NOT set Content-Type - let browser handle multipart/form-data boundary
+            });
+
+            console.log('API Response status:', apiResponse.status);
+
+            if (!apiResponse.ok) {
+                const errorData = await apiResponse.json().catch(() => null);
+                console.error('API Error:', errorData);
+                throw new Error(errorData?.message || `Server error: ${apiResponse.status}`);
+            }
+
+            const result = await apiResponse.json();
+            console.log('Payment submission successful:', result);
+
+            // Show success message
+            setShowSuccess(true);
+
+            // Clear localStorage
+            localStorage.removeItem('vrDarshanRegistration');
+
+            // Redirect to success page after 2 seconds
+            // setTimeout(() => {
+            //     router.push('/VR');
+            // }, 15000);
+
+        } catch (err) {
+            console.error('Payment submission error:', err);
+            setError(err.message || 'Failed to submit payment. Please try again.');
+        } finally {
+            setSubmitting(false);
         }
-
-        // 6. Convert payment screenshot to File
-        const paymentResponse = await fetch(paymentScreenshot);
-        const paymentBlob = await paymentResponse.blob();
-        const paymentFile = new File(
-            [paymentBlob], 
-            'payment_screenshot.jpg',
-            { type: 'image/jpeg' }
-        );
-        formData.append('payment_screenshot', paymentFile);
-
-        // 7. Submit to backend (NO Content-Type header - browser sets it with boundary)
-        console.log('Submitting payment data...');
-        const apiResponse = await fetch(Backend, {
-            method: 'POST',
-            body: formData,
-            // Do NOT set Content-Type - let browser handle multipart/form-data boundary
-        });
-
-        console.log('API Response status:', apiResponse.status);
-
-        if (!apiResponse.ok) {
-            const errorData = await apiResponse.json().catch(() => null);
-            console.error('API Error:', errorData);
-            throw new Error(errorData?.message || `Server error: ${apiResponse.status}`);
-        }
-
-        const result = await apiResponse.json();
-        console.log('Payment submission successful:', result);
-
-        // Show success message
-        setShowSuccess(true);
-
-        // Clear localStorage
-        localStorage.removeItem('vrDarshanRegistration');
-
-        // Redirect to success page after 2 seconds
-        // setTimeout(() => {
-        //     router.push('/VR');
-        // }, 15000);
-
-    } catch (err) {
-        console.error('Payment submission error:', err);
-        setError(err.message || 'Failed to submit payment. Please try again.');
-    } finally {
-        setSubmitting(false);
-    }
-};
+    };
 
     if (loading) {
         return (
@@ -315,7 +318,7 @@ const PaymentPage = () => {
                                         {registrationData.devotees.map((devotee, idx) => {
                                             const age = parseInt(devotee.age);
                                             const isFree = age >= 60 || devotee.disability;
-                                            
+
                                             return (
                                                 <div key={idx} className="flex items-center justify-between text-sm bg-slate-50 rounded px-2 py-1.5">
                                                     <div className="flex items-center gap-2">
@@ -388,7 +391,7 @@ const PaymentPage = () => {
                             <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-center">
                                 <h2 className="text-xl font-bold text-white flex items-center justify-center gap-2">
                                     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
                                     </svg>
                                     Scan & Pay
                                 </h2>
@@ -416,7 +419,7 @@ const PaymentPage = () => {
                                             <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-blue-500 rounded-tr-lg"></div>
                                             <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-blue-500 rounded-bl-lg"></div>
                                             <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-blue-500 rounded-br-lg"></div>
-                                            
+
                                             <img
                                                 src={qrCode}
                                                 alt="Payment QR Code"
@@ -447,7 +450,7 @@ const PaymentPage = () => {
                                             </div>
                                             <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm">
                                                 <svg className="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
                                                 </svg>
                                                 <span className="text-xs font-semibold text-slate-700">Verified</span>
                                             </div>
@@ -483,7 +486,7 @@ const PaymentPage = () => {
                                         <div className="flex items-start gap-2 mb-3">
                                             <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                                                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                                 </svg>
                                             </div>
                                             <div>
@@ -583,6 +586,7 @@ const PaymentPage = () => {
                             >
                                 {submitting ? (
                                     <span className="flex items-center justify-center gap-2">
+                                        
                                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                                         Submitting...
                                     </span>
@@ -598,7 +602,7 @@ const PaymentPage = () => {
                 <div className="mt-4 bg-white rounded-xl shadow-lg p-4 text-center text-sm text-slate-600">
                     <p>
                         ⚠️ Your booking will be confirmed after payment verification.
-                        You will receive confirmation via email and SMS within 24 hours.
+                        You will receive confirmation via email within 24 hours.
                     </p>
                 </div>
             </div>
