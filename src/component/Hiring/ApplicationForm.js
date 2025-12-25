@@ -113,6 +113,36 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
         : '';
 
       formDataToSend.append('work_proof_link', formattedWorkProofs);
+      // Optional personal info
+      if (formData.gender) {
+        formDataToSend.append('gender', formData.gender);
+      }
+
+      if (formData.education_qualification) {
+        formDataToSend.append('education_qualification', formData.education_qualification.trim());
+      }
+
+      if (formData.college_name) {
+        formDataToSend.append('college_name', formData.college_name.trim());
+      }
+
+      if (formData.school_name) {
+        formDataToSend.append('school_name', formData.school_name.trim());
+      }
+
+      if (formData.referral_source) {
+        formDataToSend.append('referral_source', formData.referral_source.trim());
+      }
+
+      // Optional links
+      if (formData.linkedin_profile) {
+        formDataToSend.append('linkedin_profile', formData.linkedin_profile.trim());
+      }
+
+      if (formData.portfolio_url) {
+        formDataToSend.append('portfolio_url', formData.portfolio_url.trim());
+      }
+
 
 
       // Files
