@@ -13,7 +13,7 @@ export default function HeroParallax() {
             <div className="max-w-7xl mx-auto px-6 md:px-10 relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-center ">
 
                 <div className="md:col-span-7 py-10 md:py-30 flex flex-col items-start ">
-                    <p className="text-amber-400 mb-4">
+                    <p className="text-white font-bold mb-4">
                         Together We Can Make Awesome Memories
                     </p>
 

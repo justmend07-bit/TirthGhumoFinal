@@ -11,7 +11,7 @@ const cards = [
     img: '/Temple_pilgrimage_story_d24e29fe.png',
   },
   {
-    title: 'VIRTUAL DARSHAN (VR)',
+    title: 'Divya Drishti',
     body:
       'Experience divine darshan from anywhere through immersive VR technology. Visit holy temples and pilgrimage sites virtually — no crowds, no travel stress, just pure spiritual connection at your convenience.',
     img: '/images/VR/VRicon.png',
