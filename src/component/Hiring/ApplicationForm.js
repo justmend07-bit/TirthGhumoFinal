@@ -174,6 +174,11 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
       formDataToSend.append('id_proof_type', formData.id_proof_type);
       formDataToSend.append('id_proof_file', idProofFile);
 
+      for (const [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
+
+
       const response = await fetch(HiringBackendURL, {
         method: 'POST',
         body: formDataToSend,
@@ -182,6 +187,9 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to submit application');
+      }
+      for (const [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
       }
 
       setIsSuccess(true);
@@ -720,10 +728,10 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                   className="flex-1 px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
-                    <>
+                    <span className='flex justify-center gap-2'>
                       <Spinner />
                       Submitting...
-                    </>
+                    </span>
                   ) : (
                     "Submit Application"
                   )}
