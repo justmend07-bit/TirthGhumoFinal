@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Application Email Preview</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 20px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #ea580c 0%, #2563eb 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 10px 10px 0 0;
+      margin: -40px -40px 30px -40px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    .section-title {
+      color: #ea580c;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(135deg, #ea580c 0%, #2563eb 100%);
+      margin-right: 10px;
+      border-radius: 2px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .info-item {
+      background-color: #f9fafb;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border-left: 3px solid #ea580c;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .textarea-value {
+      background-color: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 3px solid #ea580c;
+      margin-top: 8px;
+      white-space: pre-wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+
+    .badge-yes {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-no {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge-info {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+
+    .link {
+      color: #2563eb;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #f0f0f0;
+      text-align: center;
+      color: #6b7280;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎯 New Job Application Received</h1>
+      <p>Position: Frontend Developer</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">👤 Personal Information</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Full Name</div>
+          <div class="info-value">Cristiano Fernandes</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Email</div>
+          <div class="info-value">cristiano@example.com</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Phone</div>
+          <div class="info-value">+91 98765 43210</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Date of Birth</div>
+          <div class="info-value">1999-06-12</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Gender</div>
+          <div class="info-value">Male</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">City</div>
+          <div class="info-value">Mumbai</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">💼 Position & Skills</div>
+      <div class="info-item full-width">
+        <span class="badge badge-info">Frontend Developer</span>
+      </div>
+      <div class="info-item full-width">
+        <div class="info-label">Key Skills</div>
+        <div class="info-value">React, Next.js, Tailwind CSS</div>
+      </div>
+      <div class="info-label" style="margin-top: 15px;">Why This Role?</div>
+      <div class="textarea-value">
+I enjoy building clean user interfaces and scalable frontend systems.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">🌍 Experience</div>
+      <span class="badge badge-yes">✓ Worked in Travel Company</span>
+      <span class="badge badge-yes">✓ Managed Group Trips</span>
+      <span class="badge badge-no">✗ Comfortable 24x7</span>
+
+      <div class="info-grid" style="margin-top: 15px;">
+        <div class="info-item">
+          <div class="info-label">Previous Role</div>
+          <div class="info-value">Travel Consultant</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Expertise Rating</div>
+          <div class="info-value">8 / 10</div>
+        </div>
+      </div>
+
+      <div class="info-label" style="margin-top: 15px;">Why Should We Hire You?</div>
+      <div class="textarea-value">
+I bring technical expertise along with strong domain understanding.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">🔗 Links</div>
+      <div class="info-item full-width">
+        <a class="link" href="#">https://linkedin.com/in/cristiano</a><br>
+        <a class="link" href="#">https://portfolio.example.com</a>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Submitted on Monday, June 10, 2025 – 02:30 PM</p>
+      <p>Reply to: <a class="link" href="#">cristiano@example.com</a></p>
+    </div>
+  </div>
+</body>
+</html>

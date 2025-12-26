@@ -43,6 +43,11 @@ const positions = [
       'Design intuitive, delightful user experiences that make travel planning effortless.',
   },
   {
+    title: 'Video Editor',
+    summary:
+      'Create compelling visual assets for our travel platform and marketing campaigns.',
+  },
+  {
     title: 'Business Development Consultant',
     summary:
       'Drive growth through strategic partnerships and innovative business solutions.',

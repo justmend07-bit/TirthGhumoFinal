@@ -36,11 +36,11 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="w-full h-18 fixed top-0 left-0 z-50 font-rubik bg-gradient-to-r from-white/80 via-amber-50/70 to-orange-100/70 backdrop-blur-md shadow-sm border-b border-orange-200">
-        <div className="max-w-7xl px-2 md:px-0 flex items-center justify-between h-full relative">
-
+      <nav className="w-full h-18 fixed top-0 flex flex-col pr-40 left-0 z-50 font-rubik bg-gradient-to-r from-white/80 via-amber-50/70 to-orange-100/70 backdrop-blur-md shadow-sm border-b border-orange-200">
+        <div className="max-w-7xl  md:px-0 flex items-center justify-between h-full mx-auto w-full ">
+ 
           {/* Logo */}
-          <div className="flex items-center space-x-1/2 ml-8 w-52 ">
+          <div className="flex items-center space-x-1/2 w-52 ">
             <Image
               src="/logo.png"
               alt="Tirth Ghumo Logo"
@@ -52,7 +52,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex flex-1 justify-center  ">
+          <div className="hidden md:flex flex-1 justify-center w-full items-center ">
             <div className="flex items-center space-x-8 text-gray-700 font-semibold text-sm md:text-base">
               <a href="/" className={linkClass("/")}>
                 Home
@@ -78,7 +78,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-gray-700 focus:outline-none"
           >
-            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            {menuOpen ? <X size={28} /> : <Menu size={28} className='m-4' />}
           </button>
 
         </div>
@@ -86,7 +86,7 @@ export default function Navbar() {
         {/* Mobile Dropdown */}
         {menuOpen && (
           <div className="md:hidden bg-gradient-to-b from-white/90 to-amber-100/80 backdrop-blur-md shadow-md border-t border-orange-200">
-            <div className="flex flex-col items-center py-4 space-y-4 text-gray-700 font-semibold text-base">
+            <div className="flex flex-col items-center py-4 space-y-4 text-black font-semibold text-base">
 
               <a
                 href="/"

@@ -51,9 +51,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="">
       <body
-        className={ `bg-white text-gray-900 min-h-screen ${rubik.variable} ` }
+        className={ `bg-white text-gray-900 min-h-screen flex flex-col ${rubik.variable} ` }
       >
-        {children}
+        <main className="grow">
+          {children}
+        </main>
         <FloatingWhatsApp />
         <Footer />
       </body>

@@ -8,6 +8,7 @@ const positions = [
   'Android Developer',
   'Frontend Developer',
   'UI/UX Designer',
+  'Video Editor',
   'Business Development Consultant',
   'Google Ads Manager',
   'Meta Ads Manager',
