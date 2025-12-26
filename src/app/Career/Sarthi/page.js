@@ -19,7 +19,7 @@ export default function SarthiPage() {
             <HowSarthiSupports />
             {/* <WhyEldersLove /> */}
             <WhyBecomeSarthi />
-            <WhoCanJoin />+
+            <WhoCanJoin />
             <FinalCTA  />
         </div>
     );

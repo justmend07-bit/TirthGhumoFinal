@@ -57,12 +57,12 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
     full_name: '',
     email_address: '',
     phone_number: '',
-    date_of_birth: '',
+    
     gender: '',
     current_city: '',
     education_qualification: '',
     college_name: '',
-    school_name: '',
+    
 
     // Position
     position_applied: selectedPosition || '',
@@ -110,10 +110,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
       formDataToSend.append('full_name', formData.full_name.trim());
       formDataToSend.append('email_address', formData.email_address.trim());
       formDataToSend.append('phone_number', formData.phone_number.trim());
-      formDataToSend.append(
-        'date_of_birth',
-        new Date(formData.date_of_birth).toISOString().split('T')[0]
-      );
+      
       formDataToSend.append('current_city', formData.current_city.trim());
       formDataToSend.append('position_applied', formData.position_applied);
       formDataToSend.append('why_this_role', formData.why_this_role.trim());
@@ -150,10 +147,6 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
 
       if (formData.college_name) {
         formDataToSend.append('college_name', formData.college_name.trim());
-      }
-
-      if (formData.school_name) {
-        formDataToSend.append('school_name', formData.school_name.trim());
       }
 
       if (formData.referral_source) {
@@ -243,12 +236,12 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                     full_name: '',
                     email_address: '',
                     phone_number: '',
-                    date_of_birth: '',
+                    
                     gender: '',
                     current_city: '',
                     education_qualification: '',
                     college_name: '',
-                    school_name: '',
+                    
                     position_applied: '',
                     why_this_role: '',
                     worked_in_travel_company: false,
@@ -324,18 +317,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Date of Birth *
-                    </label>
-                    <input
-                      type="date"
-                      required
-                      value={formData.date_of_birth}
-                      onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
-                    />
-                  </div>
+                  
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -382,7 +364,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      College Name
+                      Institution Name
                     </label>
                     <input
                       type="text"
@@ -390,19 +372,6 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                       onChange={(e) => setFormData({ ...formData, college_name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                       placeholder="Your college name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      School Name
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.school_name}
-                      onChange={(e) => setFormData({ ...formData, school_name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
-                      placeholder="Your school name"
                     />
                   </div>
                 </div>
@@ -623,7 +592,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Resume (PDF) *
+                      Resume (PDF) 
                     </label>
                     <input
                       type="file"
@@ -647,7 +616,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        ID Proof Type *
+                        ID Proof Type 
                       </label>
                       <select
                         required
@@ -664,7 +633,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
 
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        ID Proof Document *
+                        ID Proof Document 
                       </label>
                       <input
                         type="file"
