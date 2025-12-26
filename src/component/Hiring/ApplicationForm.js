@@ -94,12 +94,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
     setError('');
 
     try {
-      if (!resumeFile) {
-        throw new Error('Please upload your resume');
-      }
-      if (!idProofFile) {
-        throw new Error('Please upload your ID proof');
-      }
+      
       if (!formData.agreement_confirmed) {
         throw new Error('Please confirm the agreement');
       }
@@ -165,9 +160,18 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
 
 
       // Files
-      formDataToSend.append('resume_file', resumeFile);
-      formDataToSend.append('id_proof_type', formData.id_proof_type);
-      formDataToSend.append('id_proof_file', idProofFile);
+      if (resumeFile) {
+  formDataToSend.append('resume_file', resumeFile);
+}
+
+if (formData.id_proof_type) {
+  formDataToSend.append('id_proof_type', formData.id_proof_type);
+}
+
+if (idProofFile) {
+  formDataToSend.append('id_proof_file', idProofFile);
+}
+
 
       
 
@@ -597,7 +601,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                     <input
                       type="file"
                       accept=".pdf"
-                      required
+                      
                       onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
                       className="hidden"
                       id="resume-upload"
@@ -619,7 +623,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                         ID Proof Type 
                       </label>
                       <select
-                        required
+                        
                         value={formData.id_proof_type}
                         onChange={(e) => setFormData({ ...formData, id_proof_type: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
@@ -638,7 +642,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
                       <input
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png"
-                        required
+                        
                         onChange={(e) => setIdProofFile(e.target.files?.[0] || null)}
                         className="hidden"
                         id="id-proof-upload"

@@ -61,24 +61,24 @@ export default function WhyChooseUs() {
   }, []);
 
   return (
-    <section ref={containerRef} className="w-full bg-white py-20">
-      <div className="max-w-6xl mx-auto px-6 text-center">
+    <section ref={containerRef} className="w-full bg-white py-20 ">
+      <div className="max-w-6xl mx-auto px-6 text-center ">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-12">
           Why Should You Choose Us?
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 place-items-center md:place-items-stretch  ">
           {cards.map((c, i) => (
             <article
               key={c.title}
               // when `visible` becomes true we add the animation class,
               // each card has inline animationDelay for the stagger
-                className={`card-panel transform opacity-0 translate-y-6 hover:shadow-lg rounded-2xl p-5  ${visible ? 'animate-slideUpFade' : ''
+                className={`card-panel transform opacity-0 translate-y-6  rounded-2xl p-5 w-full   ${visible ? 'animate-slideUpFade' : ''
                 }`}
               style={{ animationDelay: `${i * 400}ms` }} // stagger: 0ms,200ms,400ms
             >
               <div className="flex justify-center mb-6">
-                <div className="w-[110px] h-[110px] rounded-full border border-rose-300 flex items-center justify-center">
+                <div className="w-[110px] h-[110px]  rounded-full border border-rose-300 flex items-center justify-center">
                   <Image src={c.img} alt={c.title} width={64} height={74} className='rounded-full w-[110px] h-[110px] object-cover' />
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function WhyChooseUs() {
                 {c.title}
               </h3>
 
-              <p className="text-gray-700 leading-relaxed max-w-md mx-auto md:px-5">
+              <p className="text-gray-700 leading-relaxed max-w-md mx-auto md:max-w-none md:px-5">
                 {c.body}
               </p>
             </article>
