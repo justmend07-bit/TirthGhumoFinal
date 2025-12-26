@@ -57,12 +57,12 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
     full_name: '',
     email_address: '',
     phone_number: '',
-    
+
     gender: '',
     current_city: '',
     education_qualification: '',
     college_name: '',
-    
+
 
     // Position
     position_applied: selectedPosition || '',
@@ -94,7 +94,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
     setError('');
 
     try {
-      
+
       if (!formData.agreement_confirmed) {
         throw new Error('Please confirm the agreement');
       }
@@ -105,7 +105,7 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
       formDataToSend.append('full_name', formData.full_name.trim());
       formDataToSend.append('email_address', formData.email_address.trim());
       formDataToSend.append('phone_number', formData.phone_number.trim());
-      
+
       formDataToSend.append('current_city', formData.current_city.trim());
       formDataToSend.append('position_applied', formData.position_applied);
       formDataToSend.append('why_this_role', formData.why_this_role.trim());
@@ -117,7 +117,11 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
       formDataToSend.append('worked_in_travel_company', bool(formData.worked_in_travel_company));
       formDataToSend.append('managed_group_trips', bool(formData.managed_group_trips));
       formDataToSend.append('comfortable_24x7', bool(formData.comfortable_24x7));
-      formDataToSend.append('agreement_confirmed', bool(formData.agreement_confirmed));
+      formDataToSend.append(
+        'agreement_confirmed',
+        formData.agreement_confirmed ? '1' : '0'
+      );
+
 
       if (formData.travel_expertise_rating) {
         formDataToSend.append(
@@ -159,21 +163,23 @@ export default function ApplicationForm({ isOpen = true, onClose = () => { }, se
 
 
 
-      // Files
+      // Files — OPTIONAL, backend-safe
       if (resumeFile) {
-  formDataToSend.append('resume_file', resumeFile);
-}
+        formDataToSend.append('resume_file', resumeFile);
+      }
 
-if (formData.id_proof_type) {
-  formDataToSend.append('id_proof_type', formData.id_proof_type);
-}
+      formDataToSend.append(
+        'id_proof_type',
+        formData.id_proof_type || ''
+      );
 
-if (idProofFile) {
-  formDataToSend.append('id_proof_file', idProofFile);
-}
+      if (idProofFile) {
+        formDataToSend.append('id_proof_file', idProofFile);
+      }
 
 
-      
+
+
 
 
       const response = await fetch(HiringBackendURL, {
@@ -185,7 +191,7 @@ if (idProofFile) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to submit application');
       }
-      
+
 
       setIsSuccess(true);
 
@@ -240,12 +246,12 @@ if (idProofFile) {
                     full_name: '',
                     email_address: '',
                     phone_number: '',
-                    
+
                     gender: '',
                     current_city: '',
                     education_qualification: '',
                     college_name: '',
-                    
+
                     position_applied: '',
                     why_this_role: '',
                     worked_in_travel_company: false,
@@ -321,7 +327,7 @@ if (idProofFile) {
                     />
                   </div>
 
-                  
+
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -596,12 +602,12 @@ if (idProofFile) {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Resume (PDF) 
+                      Resume (PDF)
                     </label>
                     <input
                       type="file"
                       accept=".pdf"
-                      
+
                       onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
                       className="hidden"
                       id="resume-upload"
@@ -620,10 +626,10 @@ if (idProofFile) {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        ID Proof Type 
+                        ID Proof Type
                       </label>
                       <select
-                        
+
                         value={formData.id_proof_type}
                         onChange={(e) => setFormData({ ...formData, id_proof_type: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
@@ -637,12 +643,12 @@ if (idProofFile) {
 
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        ID Proof Document 
+                        ID Proof Document
                       </label>
                       <input
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png"
-                        
+
                         onChange={(e) => setIdProofFile(e.target.files?.[0] || null)}
                         className="hidden"
                         id="id-proof-upload"
