@@ -36,8 +36,8 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="w-full h-18 fixed top-0 flex flex-col pr-40 left-0 z-50 font-rubik bg-gradient-to-r from-white/80 via-amber-50/70 to-orange-100/70 backdrop-blur-md shadow-sm border-b border-orange-200">
-        <div className="max-w-7xl  md:px-0 flex items-center justify-between h-full mx-auto w-full ">
+      <nav className="w-full h-18 fixed top-0 flex flex-col pr-2 md:pr-50  left-0 z-50 font-rubik bg-gradient-to-r from-white/80 via-amber-50/70 to-orange-100/70 backdrop-blur-md shadow-sm border-b border-orange-200">
+        <div className="max-w-full md:px-0 flex items-center justify-between h-full mx-auto w-full ">
  
           {/* Logo */}
           <div className="flex items-center space-x-1/2 w-52 ">
@@ -78,7 +78,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-gray-700 focus:outline-none"
           >
-            {menuOpen ? <X size={28} /> : <Menu size={28} className='m-4' />}
+            {menuOpen ? <X size={28} /> : <Menu size={28} className='m-4 ' />}
           </button>
 
         </div>

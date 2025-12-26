@@ -436,7 +436,7 @@ const PaymentPage = () => {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                                     </svg>
                                                     <p className="font-mono font-bold text-slate-800 text-sm sm:text-base tracking-wide">
-                                                        vrdarshan@paytm
+                                                        6260499299@okbizaxis
                                                     </p>
                                                 </div>
                                             </div>
@@ -458,7 +458,7 @@ const PaymentPage = () => {
                                     </div>
 
                                     {/* Supported Apps */}
-                                    <div className="mb-4">
+                                    {/* <div className="mb-4">
                                         <p className="text-xs text-center text-slate-500 font-medium mb-3">Supported UPI Apps</p>
                                         <div className="flex items-center justify-center gap-4 flex-wrap">
                                             {['Paytm', 'PhonePe', 'GPay', 'BHIM'].map((app) => (
@@ -470,7 +470,7 @@ const PaymentPage = () => {
                                                 </div>
                                             ))}
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     {/* Download Button */}
                                     <button
