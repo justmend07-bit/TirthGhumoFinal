@@ -1,6 +1,6 @@
 "use client";
 
-import { FaWhatsapp, FaFacebook, FaLinkedin, FaInstagram, FaPhone } from "react-icons/fa";
+import { FaWhatsapp, FaFacebook, FaLinkedin, FaInstagram, FaPhone, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
     return (
@@ -56,12 +56,8 @@ export default function Footer() {
                             >
                                 <FaLinkedin size={18} />
                             </a>
-                            <a 
-                                href="tel:+916260499299"
-                                className="bg-white p-2.5 sm:p-3 rounded-full hover:bg-yellow-500 transition-colors duration-300 text-yellow-500 hover:text-white"
-                                aria-label="Phone"
-                            >
-                                <FaPhone size={18} />
+                            <a href="https://www.youtube.com/@TirthGhumo" target="_blank" className="bg-white hover:bg-yellow-500 transition-colors duration-300  text-yellow-500 hover:text-white p-2.5 sm:p-3 rounded-full ">
+                                <FaYoutube size={18} />
                             </a>
                         </div>
                     </div>

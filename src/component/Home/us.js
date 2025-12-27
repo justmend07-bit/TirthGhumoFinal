@@ -67,13 +67,13 @@ export default function WhyChooseUs() {
           Why Should You Choose Us?
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 place-items-center md:place-items-stretch  ">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 ">
           {cards.map((c, i) => (
             <article
               key={c.title}
               // when `visible` becomes true we add the animation class,
               // each card has inline animationDelay for the stagger
-                className={`card-panel transform opacity-0 translate-y-6  rounded-2xl p-5 w-full   ${visible ? 'animate-slideUpFade' : ''
+                className={`card-panel transform opacity-0 translate-y-6 hover:shadow-lg rounded-2xl p-5 w-full   ${visible ? 'animate-slideUpFade' : ''
                 }`}
               style={{ animationDelay: `${i * 400}ms` }} // stagger: 0ms,200ms,400ms
             >
