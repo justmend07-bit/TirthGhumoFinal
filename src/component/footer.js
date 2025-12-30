@@ -69,17 +69,17 @@ export default function Footer() {
                             <h3 className="font-bold text-base md:text-lg mb-4 md:mb-5 text-gray-900">Informations</h3>
                             <ul className="space-y-3 md:space-y-4 text-sm">
                                 <li>
-                                    <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
+                                    <a href="/AboutUs" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
                                         About Us
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
-                                        Blog
+                                    <a href="/Career/Sarthi" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
+                                        Saarthi
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
+                                    <a href="#testimonials" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
                                         Testimonial
                                     </a>
                                 </li>
@@ -97,12 +97,12 @@ export default function Footer() {
                                 </li>
                                 <li>
                                     <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
-                                        Supports
+                                        Blog
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
-                                        T&Cs
+                                        Supports
                                     </a>
                                 </li>
                             </ul>
@@ -113,17 +113,17 @@ export default function Footer() {
                             <h3 className="font-bold text-base md:text-lg mb-4 md:mb-5 text-gray-900">Our Services</h3>
                             <ul className="space-y-3 md:space-y-4 text-sm">
                                 <li>
-                                    <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
-                                        Photography
+                                    <a href="/VR" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
+                                        Divya Darshan
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
-                                        Support 24/7
+                                    <a href="/Contact" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
+                                        Contact US
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
+                                    <a href="/package" className="hover:text-yellow-600 transition-colors duration-300 font-sans font-semibold">
                                         Packages
                                     </a>
                                 </li>
