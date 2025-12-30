@@ -5,14 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 const sample = {
   left: [
     {
-      text: "A stress-free, spiritual getaway. From the Ganga Aarti to yoga in Rishikesh, every detail was taken care of!",
-      name: "Sneha D.",
+      text: "Everything went so smoothly with Tirth Ghumo It truly felt less like a trip with a company and more like a journey with friends. The comfort, care, and vibe made the whole experience unforgettable",
+      name: "Mr.Adarsh",
       avatar: "/logo1.png",
       stars: 5,
     },
     {
-      text: "A stress-free, spiritual getaway. From the Ganga Aarti to yoga in Rishikesh, every detail was taken care of!",
-      name: "Sneha D.",
+      text: "Tirthghumo provided a hassle-free and enjoyable trip experience. Everything was well-managed and on time.",
+      name: "Ms. Shruti",
       avatar: "/logo1.png",
       stars: 5,
     },
@@ -20,24 +20,24 @@ const sample = {
   center: [
     {
       text:
-        "Amazing experience with TirthGhumo! Professional, knowledgeable, and friendly team. Perfectly curated itinerary and unforgettable memories. Thankyou divyansh and Navtej for making our trip special & unforgettable",
-      name: "Sakshi Soni",
+        "Thanks to Tirthghumo, my pilgrimage was peaceful and well-organized. The arrangements were perfect for senior citizens.",
+      name: "Mr.Mithleswar singh",
       avatar: "/logo1.png",
       stars: 4,
       highlight: true,
     },
     {
       text:
-        "Amazing experience with TirthGhumo! Professional, knowledgeable, and friendly team. Perfectly curated itinerary and unforgettable memories. Thankyou divyansh and Navtej for making our trip special & unforgettable",
-      name: "Ramesh T.",
+        "Tirthghumo made our Somnath and Dwarka journey very smooth and comfortable. Excellent planning and caring service throughout.",
+      name: "Mrs. Girija Singh",
       avatar: "/logo1.png",
       stars: 5,
     },
   ],
   right: [
     {
-      text: "TirthGhumo made our journey effortless — from booking to exploring, everything was smooth and memorable!",
-      name: "Priya K.",
+      text: "Our first trip after marriage couldn’t have been more perfect! Pachmarhi’s scenic beauty, the adventures, and Tirth Ghumo’s well-planned itinerary made everything smooth and stress-free. A big thanks to the team for adding a friendly, homely vibe that made our journey even more special.",
+      name: "Mr.Sagar & Mrs. Komal",
       avatar: "/logo1.png",
       stars: 5,
     },
@@ -77,7 +77,7 @@ export default function Testimonials() {
   }, []);
 
   return (
-    <section ref={ref} className="w-full bg-white py-12 sm:py-16 md:py-20">
+    <section ref={ref} id='testimonials' className="w-full bg-white py-12 sm:py-16 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#24123a] mb-8 sm:mb-10 md:mb-12 px-4">
           Why People Love Us?
@@ -233,13 +233,14 @@ export default function Testimonials() {
                 style={{ animationDelay: `${i * 120}ms` }}
               >
                 <p className="italic leading-relaxed">"{t.text}"</p>
-                <div className="mt-5 lg:mt-6 flex items-center gap-3 lg:gap-4 justify-end">
+                <div className="mt-5 lg:mt-6 flex items-center gap-3 lg:gap-4 justify-start">
+                  
+                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-white flex-shrink-0">
+                    <Image src={t.avatar} alt={t.name} width={40} height={40} style={{ objectFit: 'cover' }} />
+                  </div>
                   <div className="text-right">
                     <div className="text-sm font-semibold text-gray-800">{t.name}</div>
                     <div className="mt-1"><Stars count={t.stars} size={12} muted /></div>
-                  </div>
-                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-white flex-shrink-0">
-                    <Image src={t.avatar} alt={t.name} width={40} height={40} style={{ objectFit: 'cover' }} />
                   </div>
                 </div>
               </blockquote>
