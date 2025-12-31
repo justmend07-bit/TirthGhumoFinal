@@ -60,6 +60,9 @@ export default function Navbar() {
               <a href="/package" className={linkClass("/package")}>
                 Tour Packages
               </a>
+              <a href="/VR" className={linkClass("/VR")}>
+                Divya Drishti
+              </a>
               <a href="/Contact" className={linkClass("/Contact")}>
                 Contact
               </a>
@@ -70,6 +73,7 @@ export default function Navbar() {
               <a href="/AboutUs" className={linkClass("/AboutUs")}>
                 About Us
               </a>
+              
             </div>
           </div>
 
@@ -104,6 +108,13 @@ export default function Navbar() {
                 Tour Packages
               </a>
               <a
+                href="/VR"
+                className="hover:text-orange-600 transition-colors"
+                onClick={() => setMenuOpen(false)}
+              >
+                Divya Drishti
+              </a>
+              <a
                 href="/Contact"
                 className="hover:text-orange-600 transition-colors"
                 onClick={() => setMenuOpen(false)}
@@ -123,6 +134,7 @@ export default function Navbar() {
               >
                 About Us
               </a>
+              
 
             </div>
           </div>

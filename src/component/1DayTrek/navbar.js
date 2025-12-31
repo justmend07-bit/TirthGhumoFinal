@@ -51,6 +51,7 @@ export default function Navbar() {
                         <ul className="flex gap-8 items-center text-lg font-rubik text-white font-semibold">
                             <a href='/' className="text-amber-500 underline" > Home </a>
                             <a href='/package' className={linkClass('/package')} > Tour Packages</a>
+                            <a href='/VR' className={linkClass('/VR')} > Divya Drishti</a>
                             <a href='/Contact' className={linkClass('/package')}>Contact</a>
                             <a href='/Career' className={linkClass('/package')}>Career</a>
                             <a href='/AboutUs' className={linkClass('/package')}>About Us</a>
@@ -94,6 +95,7 @@ export default function Navbar() {
                             <ul className="flex flex-col gap-4  text-xl">
                                 <a href='/'> Home </a>
                                 <a href='/package'> Tour Packages</a>
+                                <a href='/VR'> Divya Drishti</a>
                                 <a href='/Contact'>Contact</a>
                                 <a href='/Career'>Career</a>
                                 <a href='/AboutUs'>About Us</a>
