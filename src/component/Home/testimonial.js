@@ -7,13 +7,13 @@ const sample = {
     {
       text: "Everything went so smoothly with Tirth Ghumo It truly felt less like a trip with a company and more like a journey with friends. The comfort, care, and vibe made the whole experience unforgettable",
       name: "Mr.Adarsh",
-      avatar: "/logo1.png",
+      avatar: "/images/testimonials/1.jpg",
       stars: 5,
     },
     {
       text: "Tirthghumo provided a hassle-free and enjoyable trip experience. Everything was well-managed and on time.",
       name: "Ms. Shruti",
-      avatar: "/logo1.png",
+      avatar: "/images/testimonials/5.jpg",
       stars: 5,
     },
   ],
@@ -22,7 +22,7 @@ const sample = {
       text:
         "Thanks to Tirthghumo, my pilgrimage was peaceful and well-organized. The arrangements were perfect for senior citizens.",
       name: "Mr.Mithleswar singh",
-      avatar: "/logo1.png",
+      avatar: "/images/testimonials/4.jpg",
       stars: 4,
       highlight: true,
     },
@@ -30,7 +30,7 @@ const sample = {
       text:
         "Tirthghumo made our Somnath and Dwarka journey very smooth and comfortable. Excellent planning and caring service throughout.",
       name: "Mrs. Girija Singh",
-      avatar: "/logo1.png",
+      avatar: "/images/testimonials/2.jpg",
       stars: 5,
     },
   ],
@@ -38,7 +38,7 @@ const sample = {
     {
       text: "Our first trip after marriage couldn’t have been more perfect! Pachmarhi’s scenic beauty, the adventures, and Tirth Ghumo’s well-planned itinerary made everything smooth and stress-free. A big thanks to the team for adding a friendly, homely vibe that made our journey even more special.",
       name: "Mr.Sagar & Mrs. Komal",
-      avatar: "/logo1.png",
+      avatar: "/images/testimonials/6.jpg",
       stars: 5,
     },
   ],
