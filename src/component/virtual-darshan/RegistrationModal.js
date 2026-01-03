@@ -452,11 +452,13 @@ export default function DevoteeRegistration() {
 
                       {devotee.aadharImage ? (
                         <div
+
                           className="flex items-center justify-between px-3 py-2 border-2 rounded border-green-600 bg-green-50">
                           <span className="text-sm font-semibold text-green-700">
                             Aadhaar image uploaded ✔
                           </span>
                           <button
+
                             onClick={() => updateDevotee(devotee.id, 'aadharImage', null)}
                             className="text-red-600 hover:text-red-800 cursor-pointer"
                           >
@@ -470,6 +472,7 @@ export default function DevoteeRegistration() {
                           Upload
                           <input
                             type="file"
+                            id={`aadharImage-${devotee.id}`}
                             accept="image/png,image/jpeg"
                             onChange={(e) =>
                               e.target.files?.[0] &&
@@ -477,7 +480,15 @@ export default function DevoteeRegistration() {
                             }
                             className="hidden"
                           />
+
                         </label>
+
+
+                      )}
+                      {errors[`aadharImage-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`aadharImage-${devotee.id}`]}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -495,8 +506,18 @@ export default function DevoteeRegistration() {
                         onChange={(e) =>
                           updateDevotee(devotee.id, 'name', e.target.value)
                         }
-                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className={`w-full px-3 py-2 border rounded focus:ring-2 ${errors[`name-${devotee.id}`]
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'
+                          }`}
                       />
+
+                      {errors[`name-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`name-${devotee.id}`]}
+                        </p>
+                      )}
+
                     </div>
 
                     {/* Age */}
@@ -510,8 +531,18 @@ export default function DevoteeRegistration() {
                         onChange={(e) =>
                           updateDevotee(devotee.id, 'age', e.target.value)
                         }
-                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className={`w-full px-3 py-2 border rounded focus:ring-2 ${errors[`age-${devotee.id}`]
+                            ? 'border-red-500 focus:ring-red-500'
+                            : 'border-slate-300 focus:ring-orange-500'
+                          }`}
                       />
+
+                      {errors[`age-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`age-${devotee.id}`]}
+                        </p>
+                      )}
+
                     </div>
 
                     {/* Gender */}
@@ -524,13 +555,23 @@ export default function DevoteeRegistration() {
                         onChange={(e) =>
                           updateDevotee(devotee.id, 'gender', e.target.value)
                         }
-                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className={`w-full px-3 py-2 border rounded focus:ring-2 ${errors[`gender-${devotee.id}`]
+                            ? 'border-red-500 focus:ring-red-500'
+                            : 'border-slate-300 focus:ring-orange-500'
+                          }`}
                       >
+
                         <option value="">Select</option>
                         <option>Male</option>
                         <option>Female</option>
                         <option>Other</option>
                       </select>
+                      {errors[`gender-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`gender-${devotee.id}`]}
+                        </p>
+                      )}
+
                     </div>
 
                     {/* Aadhaar Number */}
@@ -545,8 +586,18 @@ export default function DevoteeRegistration() {
                           const value = e.target.value.replace(/\D/g, '').slice(0, 12)
                           updateDevotee(devotee.id, 'aadhar', value)
                         }}
-                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className={`w-full px-3 py-2 border rounded focus:ring-2 ${errors[`aadhar-${devotee.id}`]
+                            ? 'border-red-500 focus:ring-red-500'
+                            : 'border-slate-300 focus:ring-orange-500'
+                          }`}
                       />
+
+                      {errors[`aadhar-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`aadhar-${devotee.id}`]}
+                        </p>
+                      )}
+
                     </div>
 
                     {/* Aadhaar Image */}
@@ -554,7 +605,13 @@ export default function DevoteeRegistration() {
                       <label className="block text-sm font-semibold text-slate-700 mb-1">
                         Aadhaar Image *
                       </label>
-                      <label className="flex items-center justify-center px-3 py-2 border-2 border-dashed border-slate-300 rounded cursor-pointer hover:border-orange-500">
+                      <label
+                        className={`flex items-center justify-center px-3 py-2 border-2 border-dashed rounded cursor-pointer ${errors[`aadharImage-${devotee.id}`]
+                            ? 'border-red-500 bg-red-50'
+                            : 'border-slate-300 hover:border-orange-500'
+                          }`}
+                      >
+
                         <Upload className="w-4 h-4 mr-2 text-slate-500" />
                         Upload
                         <input
@@ -566,6 +623,12 @@ export default function DevoteeRegistration() {
                           }
                         />
                       </label>
+                      {errors[`aadharImage-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`aadharImage-${devotee.id}`]}
+                        </p>
+                      )}
+
                     </div>
                   </div>
 
@@ -884,11 +947,10 @@ export default function DevoteeRegistration() {
                 onClick={handleProceedToPay}
                 disabled={submitting}
                 className={`w-full sm:w-auto px-8 sm:px-10 py-3 font-semibold rounded-lg shadow-lg transition-all
-      ${submitting
+        ${submitting
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-orange-600 to-red-600 text-white hover:from-orange-700 hover:to-red-700 transform hover:scale-105'
-                  }
-    `}
+                  }`}
               >
                 {submitting
                   ? 'Processing...'
