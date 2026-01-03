@@ -165,7 +165,7 @@ const LandingPage = () => {
                   </h3>
                 </div>
                 <p className="text-gray-600">
-                  Complimentary access ensuring everyone can experience divine presence
+                  Complimentary 1st Divya Darshan ensuring everyone can experience divine presence
                 </p>
               </div>
             </div>
@@ -180,7 +180,7 @@ const LandingPage = () => {
                 </h3>
               </div>
               <p className="text-gray-600">
-                Affordable spiritual experience for all other devotees at just ₹39 per person
+                Affordable spiritual experience for all other devotees at just ₹39 per person per darshan
               </p>
             </div>
 

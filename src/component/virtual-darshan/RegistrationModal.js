@@ -47,6 +47,8 @@ export default function DevoteeRegistration() {
     process.env.NEXT_PUBLIC_BACKEND_URL + '/vr-darshan/price';
 
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+
 
   const [devotees, setDevotees] = useState([
     { id: 1, name: '', age: '', gender: '', aadhar: '', aadharImage: null, disability: false }
@@ -129,18 +131,57 @@ export default function DevoteeRegistration() {
 
     if (!res.ok) throw new Error('Price API failed');
     const data = await res.json();
-    return data; 
+    return data;
   };
+
+  const scrollToError = (field) => {
+    const el = document.getElementById(field);
+    if (el) {
+      el.scrollIntoView({ behaviour: 'smooth', block: 'center' });
+      el.focus();
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    devotees.forEach((d, index) => {
+      if (!d.name) newErrors[`name-${d.id}`] = 'Name is required';
+      if (!d.age) newErrors[`age-${d.id}`] = 'Age is required';
+      if (!d.gender) newErrors[`gender-${d.id}`] = 'Gender is required';
+      if (!d.aadhar || d.aadhar.length !== 12)
+        newErrors[`aadhar-${d.id}`] = 'Valid 12-digit Aadhaar is required';
+      if (!d.aadharImage)
+        newErrors[`aadharImage-${d.id}`] = 'Aadhaar image is required';
+    });
+
+    if (!contactNumber) newErrors.contactNumber = 'Contact number is required';
+    if (!whatsappNumber) newErrors.whatsappNumber = 'WhatsApp number is required';
+    if (!address) newErrors.address = 'Address is required';
+    if (!email) newErrors.email = 'Email is required';
+    if (!category) newErrors.category = 'Category is required';
+    if (!place) newErrors.place = 'Spiritual place is required';
+    if (!selectedDate) newErrors.selectedDate = 'Date is required';
+    if (!selectedTime) newErrors.selectedTime = 'Time slot is required';
+
+    setErrors(newErrors);
+
+    const firstErrorKey = Object.keys(newErrors)[0];
+    if (firstErrorKey) scrollToError(firstErrorKey);
+
+    return Object.keys(newErrors).length === 0;
+  }
 
   /* ------------------ SUBMIT ------------------ */
 
   const handleProceedToPay = async () => {
+    if (!validateForm()) return;
     try {
       setSubmitting(true);
 
       // Send ONLY people below 60 and get QR code from response
       const priceResponse = await sendPeopleBelow60(charges.peopleBelow60);
-      const payment_qr_url = priceResponse.payment_qr_url; 
+      const payment_qr_url = priceResponse.payment_qr_url;
 
       //Save everything locally
       localStorage.setItem(
@@ -161,6 +202,9 @@ export default function DevoteeRegistration() {
         })
       );
 
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem('vrDarshanStep', 'payment');
+      }
       //Redirect
       router.push('/VR/payment');
 
@@ -173,25 +217,25 @@ export default function DevoteeRegistration() {
   };
 
 
-/* ------------------ SLOT HELPERS ------------------ */
+  /* ------------------ SLOT HELPERS ------------------ */
 
-// Weekend check (Saturday = 6, Sunday = 0)
-const isWeekend = (dateString) => {
-  if (!dateString) return false;
-  const day = new Date(dateString).getDay();
-  return day === 0 || day === 6;
-};
+  // Weekend check (Saturday = 6, Sunday = 0)
+  const isWeekend = (dateString) => {
+    if (!dateString) return false;
+    const day = new Date(dateString).getDay();
+    return day === 0 || day === 6;
+  };
 
-// Slot booking check (TEMP: nothing is booked)
-const isSlotBooked = (date, timeSlot) => {
-  return false;
-};
+  // Slot booking check (TEMP: nothing is booked)
+  const isSlotBooked = (date, timeSlot) => {
+    return false;
+  };
 
-// Slot selection
-const handleTimeSlotClick = (timeSlot) => {
-  if (!selectedDate) return;
-  setSelectedTime(timeSlot);
-};
+  // Slot selection
+  const handleTimeSlotClick = (timeSlot) => {
+    if (!selectedDate) return;
+    setSelectedTime(timeSlot);
+  };
 
 
   return (
@@ -219,21 +263,21 @@ const handleTimeSlotClick = (timeSlot) => {
               <div>
                 <h3 className="font-semibold text-lg mb-2">2. Saarthi (Guide) Arrangements</h3>
                 <p>• Travel expenses for the assigned Saarthi (guide) will be borne by the devotee/user.</p>
-                <p>• Accommodation costs for the Saarthi, if required, will be the responsibility of the devotee/user.</p>
+                <p>• Accommodation costs for the Saarthi, will be the responsibility of the devotee/user.</p>
                 <p>• Food and other personal expenses of the Saarthi are to be covered by the devotee/user.</p>
               </div>
 
               <div>
                 <h3 className="font-semibold text-lg mb-2">3. Charges & Payment</h3>
                 <p>• Registration fee: ₹39 per person.</p>
-                <p>• Senior citizens (60+ years) and persons with disabilities are eligible for free registration.</p>
+                <p>• Only first Darshan for Senior citizens (60+ years) and persons with disabilities will be free registration.</p>
                 <p>• Payment is non-refundable once confirmed.</p>
               </div>
 
               <div>
                 <h3 className="font-semibold text-lg mb-2">4. Booking & Cancellation</h3>
                 <p>• Time slots are subject to availability on a first-come, first-served basis.</p>
-                <p>• Cancellations must be made at least 48 hours in advance.</p>
+                <p>• Cancellations after registration are not allowed.</p>
                 <p>• No-shows will not be eligible for refunds or rescheduling.</p>
               </div>
 
@@ -307,14 +351,21 @@ const handleTimeSlotClick = (timeSlot) => {
                         Full Name *
                       </label>
                       <input
+                        id={`name-${devotee.id}`}
                         type="text"
                         value={devotee.name}
                         onChange={(e) =>
                           updateDevotee(devotee.id, 'name', e.target.value)
                         }
-                        className="w-full px-3 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className={`w-full px-3 py-1.5 border rounded focus:ring-2 ${errors[`name-${devotee.id}`] ? 'border-red-500 focus:ring-red-500' : 'border-slate-300 focus:ring-orange-500'}`}
                         placeholder="Full name"
                       />
+
+                      {errors[`name-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`name-${devotee.id}`]}
+                        </p>
+                      )}
                     </div>
 
                     {/* Age (tight) */}
@@ -323,15 +374,21 @@ const handleTimeSlotClick = (timeSlot) => {
                         Age *
                       </label>
                       <input
+                        id={`age-${devotee.id}`}
                         type="number"
                         value={devotee.age}
                         onChange={(e) =>
                           updateDevotee(devotee.id, 'age', e.target.value)
                         }
-                        className="w-full px-3 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className={`w-full px-3 py-1.5 border rounded focus:ring-2 ${errors[`age-${devotee.id}`] ? 'border-red-500 focus:ring-red-500' : 'border-slate-300 focus:ring-orange-500'}`}
                         min="1"
                         max="120"
                       />
+                      {errors[`age-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`age-${devotee.id}`]}
+                        </p>
+                      )}
                     </div>
 
                     {/* Gender */}
@@ -340,17 +397,27 @@ const handleTimeSlotClick = (timeSlot) => {
                         Gender *
                       </label>
                       <select
+                        id={`gender-${devotee.id}`}
                         value={devotee.gender}
                         onChange={(e) =>
                           updateDevotee(devotee.id, 'gender', e.target.value)
                         }
-                        className="w-full px-3 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className={`w-full px-3 py-1.5 border rounded focus:ring-2 ${errors[`gender-${devotee.id}`]
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'
+                          }`}
                       >
                         <option value="">Select</option>
                         <option>Male</option>
                         <option>Female</option>
                         <option>Other</option>
                       </select>
+                      {errors[`gender-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`gender-${devotee.id}`]}
+                        </p>
+                      )}
+
                     </div>
 
                     {/* Aadhaar Number (wider) */}
@@ -360,6 +427,7 @@ const handleTimeSlotClick = (timeSlot) => {
                       </label>
                       <input
                         type="text"
+                        id={`aadhar-${devotee.id}`}
                         value={devotee.aadhar}
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, '').slice(0, 12)
@@ -369,6 +437,11 @@ const handleTimeSlotClick = (timeSlot) => {
                         placeholder="12 digits"
                         maxLength="12"
                       />
+                      {errors[`aadhar-${devotee.id}`] && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {errors[`aadhar-${devotee.id}`]}
+                        </p>
+                      )}
                     </div>
 
                     {/* Aadhaar Image (compact) */}
@@ -378,19 +451,19 @@ const handleTimeSlotClick = (timeSlot) => {
                       </label>
 
                       {devotee.aadharImage ? (
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-green-600 truncate flex-1">
-                            Image uploaded
+                        <div
+                          className="flex items-center justify-between px-3 py-2 border-2 rounded border-green-600 bg-green-50">
+                          <span className="text-sm font-semibold text-green-700">
+                            Aadhaar image uploaded ✔
                           </span>
                           <button
-                            onClick={() =>
-                              updateDevotee(devotee.id, 'aadharImage', null)
-                            }
-                            className="text-red-600 hover:text-red-800"
+                            onClick={() => updateDevotee(devotee.id, 'aadharImage', null)}
+                            className="text-red-600 hover:text-red-800 cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
+
                       ) : (
                         <label className="flex items-center justify-center px-2 py-1.5 border-2 border-dashed border-slate-300 rounded cursor-pointer hover:border-orange-500 text-xs">
                           <Upload className="w-4 h-4 mr-1 text-slate-500" />
@@ -528,64 +601,109 @@ const handleTimeSlotClick = (timeSlot) => {
               <div className="border-b-2 border-orange-400 mb-4"></div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                {/* Contact Number */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
                     Contact Number *
                   </label>
                   <input
+                    id="contactNumber"
                     type="tel"
                     value={contactNumber}
                     onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '').slice(0, 10)
-                      setContactNumber(value)
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setContactNumber(value);
                     }}
-                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                    className={`w-full px-3 py-2 border rounded focus:ring-2
+            ${errors.contactNumber
+                        ? 'border-red-500 focus:ring-red-500'
+                        : 'border-slate-300 focus:ring-orange-500'}
+          `}
                     placeholder="Enter contact number"
                     maxLength="10"
                   />
+                  {errors.contactNumber && (
+                    <p className="text-red-600 text-xs mt-1">
+                      {errors.contactNumber}
+                    </p>
+                  )}
                 </div>
 
+                {/* WhatsApp Number */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
                     WhatsApp Number *
                   </label>
                   <input
+                    id="whatsappNumber"
                     type="tel"
                     value={whatsappNumber}
                     onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '').slice(0, 10)
-                      setWhatsappNumber(value)
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setWhatsappNumber(value);
                     }}
-                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                    className={`w-full px-3 py-2 border rounded focus:ring-2
+            ${errors.whatsappNumber
+                        ? 'border-red-500 focus:ring-red-500'
+                        : 'border-slate-300 focus:ring-orange-500'}
+          `}
                     placeholder="Enter WhatsApp number"
                     maxLength="10"
                   />
+                  {errors.whatsappNumber && (
+                    <p className="text-red-600 text-xs mt-1">
+                      {errors.whatsappNumber}
+                    </p>
+                  )}
                 </div>
 
+                {/* Address */}
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
                     Address *
                   </label>
                   <textarea
+                    id="address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     rows="3"
-                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                    className={`w-full px-3 py-2 border rounded focus:ring-2
+            ${errors.address
+                        ? 'border-red-500 focus:ring-red-500'
+                        : 'border-slate-300 focus:ring-orange-500'}
+          `}
                     placeholder="Enter your complete address"
                   />
+                  {errors.address && (
+                    <p className="text-red-600 text-xs mt-1">
+                      {errors.address}
+                    </p>
+                  )}
                 </div>
 
+                {/* Email */}
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
                     Email ID *
                   </label>
                   <input
+                    id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                    className={`w-full px-3 py-2 border rounded focus:ring-2
+            ${errors.email
+                        ? 'border-red-500 focus:ring-red-500'
+                        : 'border-slate-300 focus:ring-orange-500'}
+          `}
                     placeholder="your.email@example.com"
                   />
+                  {errors.email && (
+                    <p className="text-red-600 text-xs mt-1">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -598,6 +716,7 @@ const handleTimeSlotClick = (timeSlot) => {
               <div className="border-b-2 border-orange-400 mb-4"></div>
 
               <div className="space-y-4">
+
                 {/* Category + Place */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -605,18 +724,28 @@ const handleTimeSlotClick = (timeSlot) => {
                       Category *
                     </label>
                     <select
+                      id="category"
                       value={category}
                       onChange={(e) => {
-                        setCategory(e.target.value)
-                        setPlace('')
+                        setCategory(e.target.value);
+                        setPlace('');
                       }}
-                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                      className={`w-full px-3 py-2 border rounded focus:ring-2
+              ${errors.category
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'}
+            `}
                     >
                       <option value="">-- Select Category --</option>
                       {Object.keys(spiritualPlaces).map((cat) => (
                         <option key={cat} value={cat}>{cat}</option>
                       ))}
                     </select>
+                    {errors.category && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {errors.category}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -624,10 +753,15 @@ const handleTimeSlotClick = (timeSlot) => {
                       Spiritual Place *
                     </label>
                     <select
+                      id="place"
                       value={place}
                       onChange={(e) => setPlace(e.target.value)}
                       disabled={!category}
-                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                      className={`w-full px-3 py-2 border rounded focus:ring-2
+              ${errors.place
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'}
+            `}
                     >
                       <option value="">Select spiritual destination</option>
                       {category &&
@@ -635,90 +769,87 @@ const handleTimeSlotClick = (timeSlot) => {
                           <option key={p} value={p}>{p}</option>
                         ))}
                     </select>
+                    {errors.place && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {errors.place}
+                      </p>
+                    )}
                   </div>
                 </div>
 
-                {/* Date + Time Slot */}
+                {/* Date + Time */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Preferred Date * (Weekends Only)
+                      Preferred Date *
                     </label>
                     <input
+                      id="selectedDate"
                       type="date"
                       value={selectedDate}
                       min={new Date().toISOString().split('T')[0]}
                       onChange={(e) => {
-                        const date = e.target.value
+                        const date = e.target.value;
                         if (isWeekend(date)) {
-                          setSelectedDate(date)
-                          setSelectedTime('')
+                          setSelectedDate(date);
+                          setSelectedTime('');
                         } else {
-                          alert('Please select a weekend date (Saturday or Sunday)')
-                          e.target.value = ''
+                          e.target.value = '';
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                      className={`w-full px-3 py-2 border rounded focus:ring-2
+              ${errors.selectedDate
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'}
+            `}
                     />
+                    {errors.selectedDate && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {errors.selectedDate}
+                      </p>
+                    )}
                   </div>
 
-                  <div>
+                  <div id="selectedTime">
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Time Slot *
                     </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {['6-7 PM', '8-9 PM'].map((timeSlot) => {
-                        const booked = isSlotBooked(selectedDate, timeSlot)
-                        return (
-                          <button
-                            key={timeSlot}
-                            type="button"
-                            disabled={booked || !selectedDate}
-                            onClick={() => handleTimeSlotClick(timeSlot)}
-                            className={`
-                    px-4 py-2 rounded text-sm font-medium transition-all
-                    ${booked
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : selectedTime === timeSlot
-                                  ? 'bg-orange-600 text-white shadow-lg'
-                                  : 'bg-white border-2 border-slate-300 text-slate-700 hover:border-orange-500'}
-                    ${!selectedDate ? 'opacity-50 cursor-not-allowed' : ''}
-                  `}
-                          >
-                            {timeSlot}
-                            {booked && ' (Booked)'}
-                          </button>
-                        )
-                      })}
+                    <div className={`grid grid-cols-2 gap-3 p-2 rounded ${errors.selectedTime ? 'border-2 border-red-500' : ''}`}>
+                      {['6-7 PM', '8-9 PM'].map((timeSlot) => (
+                        <button
+                          key={timeSlot}
+                          type="button"
+                          onClick={() => handleTimeSlotClick(timeSlot)}
+                          className={`px-4 py-2 rounded text-sm font-medium
+                  ${selectedTime === timeSlot
+                              ? 'bg-orange-600 text-white'
+                              : 'bg-white border-2 border-slate-300'}
+                `}
+                        >
+                          {timeSlot}
+                        </button>
+                      ))}
                     </div>
+                    {errors.selectedTime && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {errors.selectedTime}
+                      </p>
+                    )}
                   </div>
-                </div>
-
-                {/* Special Request */}
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Special Request (Optional)
-                  </label>
-                  <textarea
-                    value={specialRequest}
-                    onChange={(e) => setSpecialRequest(e.target.value)}
-                    rows="3"
-                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
-                    placeholder="Any special requirements or requests..."
-                  />
                 </div>
               </div>
             </div>
           </div>
+
 
           {/* Charges Summary and Submit */}
           <div className="space-y-4">
             {/* Charges Summary */}
             {devotees.length > 0 && devotees[0].age && (
               <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-                <h3 className="font-semibold text-slate-800 mb-2">Charges Summary</h3>
+                <h3 className="font-semibold text-black mb-2">Charges Summary</h3>
                 <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-black">
                     <span>Chargeable Devotees ({charges.chargeableDevotees}):</span>
                     <span className="font-semibold">₹{charges.chargeableDevotees * CHARGE_PER_PERSON}</span>
                   </div>
@@ -728,7 +859,7 @@ const handleTimeSlotClick = (timeSlot) => {
                       <span className="font-semibold">₹0</span>
                     </div>
                   )}
-                  <div className="border-t-2 border-blue-300 pt-2 mt-2 flex justify-between text-base">
+                  <div className="border-t-2 border-blue-300 pt-2 mt-2 flex justify-between text-base text-black">
                     <span className="font-bold">Total Amount:</span>
                     <span className="font-bold text-lg">₹{charges.totalCharge}</span>
                   </div>

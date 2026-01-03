@@ -5,9 +5,28 @@ import {
     Download, Upload, CheckCircle, Clock, User, MapPin,
     Calendar, IndianRupee, Phone, Mail, X, AlertCircle
 } from 'lucide-react';
+import { is } from 'zod/v4/locales';
 
 const PaymentPage = () => {
     const router = useRouter();
+
+    useEffect(() => {
+        const step = sessionStorage.getItem('vrDarshanStep');
+        if (step !== 'payment') {
+            router.replace('/VR');
+            return;
+        }
+        const cleanup = () => sessionStorage.removeItem('vrDarshanStep');
+        window.addEventListener('beforeunload', cleanup);
+
+        const handlePopState = () => router.replace('/');
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('beforeunload', cleanup);
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [router]);
 
     const [registrationData, setRegistrationData] = useState(null);
     const [qrCode, setQrCode] = useState(null);
@@ -44,7 +63,9 @@ const PaymentPage = () => {
         }
     }, []);
 
-    
+    const isPaymentRequired = registrationData?.charges?.chargeableDevotees > 0;
+
+
 
 
     /* ---------------- SCREENSHOT UPLOAD ---------------- */
@@ -90,7 +111,7 @@ const PaymentPage = () => {
     /* ---------------- SUBMIT FINAL DATA ---------------- */
 
     const handleSubmitPayment = async () => {
-        if (!paymentScreenshot) {
+        if (isPaymentRequired && !paymentScreenshot) {
             setError('Please upload payment screenshot');
             return;
         }
@@ -154,14 +175,16 @@ const PaymentPage = () => {
             }
 
             // 6. Convert payment screenshot to File
-            const paymentResponse = await fetch(paymentScreenshot);
-            const paymentBlob = await paymentResponse.blob();
-            const paymentFile = new File(
-                [paymentBlob],
-                'payment_screenshot.jpg',
-                { type: 'image/jpeg' }
-            );
-            formData.append('payment_screenshot', paymentFile);
+            if (isPaymentRequired) {
+                const paymentResponse = await fetch(paymentScreenshot);
+                const paymentBlob = await paymentResponse.blob();
+                const paymentFile = new File(
+                    [paymentBlob],
+                    'payment_screenshot.jpg',
+                    { type: 'image/jpeg' }
+                );
+                formData.append('payment_screenshot', paymentFile);
+            }
 
             // 7. Submit to backend (NO Content-Type header - browser sets it with boundary)
             console.log('Submitting payment data...');
@@ -384,81 +407,82 @@ const PaymentPage = () => {
                     </div>
 
                     {/* Right Column - Payment QR & Upload */}
-                    <div className="space-y-4">
-                        {/* QR Code Section - Paytm Style */}
-                        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                            {/* Paytm-style Header */}
-                            <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-center">
-                                <h2 className="text-xl font-bold text-white flex items-center justify-center gap-2">
-                                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                                    </svg>
-                                    Scan & Pay
-                                </h2>
-                                <p className="text-blue-50 text-sm mt-1">Using any UPI app</p>
-                            </div>
+                    {isPaymentRequired && (
+                        <div className="space-y-4">
+                            {/* QR Code Section - Paytm Style */}
+                            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                                {/* Paytm-style Header */}
+                                <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-center">
+                                    <h2 className="text-xl font-bold text-white flex items-center justify-center gap-2">
+                                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+                                        </svg>
+                                        Scan & Pay
+                                    </h2>
+                                    <p className="text-blue-50 text-sm mt-1">Using any UPI app</p>
+                                </div>
 
-                            {/* QR Code Container */}
-                            {qrCode ? (
-                                <div className="p-6">
-                                    {/* Paytm-style QR Box */}
-                                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 mb-4 border-2 border-blue-200 shadow-inner">
-                                        {/* Amount Display */}
-                                        <div className="text-center mb-4">
-                                            <p className="text-sm text-slate-600 font-medium mb-1">Pay Amount</p>
-                                            <div className="flex items-center justify-center gap-1">
-                                                <IndianRupee className="w-7 h-7 text-blue-600" />
-                                                <span className="text-4xl font-bold text-slate-800">{registrationData.totalAmount}</span>
+                                {/* QR Code Container */}
+                                {qrCode ? (
+                                    <div className="p-6">
+                                        {/* Paytm-style QR Box */}
+                                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 mb-4 border-2 border-blue-200 shadow-inner">
+                                            {/* Amount Display */}
+                                            <div className="text-center mb-4">
+                                                <p className="text-sm text-slate-600 font-medium mb-1">Pay Amount</p>
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <IndianRupee className="w-7 h-7 text-blue-600" />
+                                                    <span className="text-4xl font-bold text-slate-800">{registrationData.totalAmount}</span>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {/* QR Code */}
-                                        <div className="bg-white rounded-xl p-5 shadow-lg border-4 border-white relative mx-auto" style={{ width: 'fit-content' }}>
-                                            {/* Corner Decorations */}
-                                            <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-blue-500 rounded-tl-lg"></div>
-                                            <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-blue-500 rounded-tr-lg"></div>
-                                            <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-blue-500 rounded-bl-lg"></div>
-                                            <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-blue-500 rounded-br-lg"></div>
+                                            {/* QR Code */}
+                                            <div className="bg-white rounded-xl p-5 shadow-lg border-4 border-white relative mx-auto" style={{ width: 'fit-content' }}>
+                                                {/* Corner Decorations */}
+                                                <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-blue-500 rounded-tl-lg"></div>
+                                                <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-blue-500 rounded-tr-lg"></div>
+                                                <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-blue-500 rounded-bl-lg"></div>
+                                                <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-blue-500 rounded-br-lg"></div>
 
-                                            <img
-                                                src={qrCode}
-                                                alt="Payment QR Code"
-                                                className="w-48 h-48 sm:w-56 sm:h-56"
-                                            />
-                                        </div>
+                                                <img
+                                                    src={qrCode}
+                                                    alt="Payment QR Code"
+                                                    className="w-48 h-48 sm:w-56 sm:h-56"
+                                                />
+                                            </div>
 
-                                        {/* UPI ID Section */}
-                                        <div className="mt-4 text-center">
-                                            <p className="text-xs text-slate-500 font-medium mb-2">UPI ID</p>
-                                            <div className="bg-white rounded-lg px-4 py-3 shadow-md border border-blue-200 inline-block">
-                                                <div className="flex items-center gap-2">
-                                                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                            {/* UPI ID Section */}
+                                            <div className="mt-4 text-center">
+                                                <p className="text-xs text-slate-500 font-medium mb-2">UPI ID</p>
+                                                <div className="bg-white rounded-lg px-4 py-3 shadow-md border border-blue-200 inline-block">
+                                                    <div className="flex items-center gap-2">
+                                                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                        </svg>
+                                                        <p className="font-mono font-bold text-slate-800 text-sm sm:text-base tracking-wide">
+                                                            6260499299@okbizaxis
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Payment Badges */}
+                                            <div className="flex items-center justify-center gap-3 mt-4">
+                                                <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm">
+                                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                    <span className="text-xs font-semibold text-slate-700">Secure</span>
+                                                </div>
+                                                <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm">
+                                                    <svg className="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
                                                     </svg>
-                                                    <p className="font-mono font-bold text-slate-800 text-sm sm:text-base tracking-wide">
-                                                        6260499299@okbizaxis
-                                                    </p>
+                                                    <span className="text-xs font-semibold text-slate-700">Verified</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Payment Badges */}
-                                        <div className="flex items-center justify-center gap-3 mt-4">
-                                            <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm">
-                                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                                <span className="text-xs font-semibold text-slate-700">Secure</span>
-                                            </div>
-                                            <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm">
-                                                <svg className="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                                                </svg>
-                                                <span className="text-xs font-semibold text-slate-700">Verified</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Supported Apps */}
-                                    {/* <div className="mb-4">
+                                        {/* Supported Apps */}
+                                        {/* <div className="mb-4">
                                         <p className="text-xs text-center text-slate-500 font-medium mb-3">Supported UPI Apps</p>
                                         <div className="flex items-center justify-center gap-4 flex-wrap">
                                             {['Paytm', 'PhonePe', 'GPay', 'BHIM'].map((app) => (
@@ -472,130 +496,144 @@ const PaymentPage = () => {
                                         </div>
                                     </div> */}
 
-                                    {/* Download Button */}
-                                    <button
-                                        onClick={downloadQR}
-                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition-all shadow-lg mb-4"
-                                    >
-                                        <Download className="w-5 h-5" />
-                                        Download QR Code
-                                    </button>
+                                        {/* Download Button */}
+                                        <button
+                                            onClick={downloadQR}
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition-all shadow-lg mb-4"
+                                        >
+                                            <Download className="w-5 h-5" />
+                                            Download QR Code
+                                        </button>
 
-                                    {/* Payment Instructions */}
-                                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-4 text-sm">
-                                        <div className="flex items-start gap-2 mb-3">
-                                            <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <p className="font-semibold text-blue-900 mb-2">How to Pay:</p>
-                                                <ol className="space-y-2 text-blue-800">
-                                                    <li className="flex items-start gap-2">
-                                                        <span className="font-bold min-w-[20px]">1.</span>
-                                                        <span>Open any UPI app (Paytm, PhonePe, GPay, etc.)</span>
-                                                    </li>
-                                                    <li className="flex items-start gap-2">
-                                                        <span className="font-bold min-w-[20px]">2.</span>
-                                                        <span>Scan the QR code above</span>
-                                                    </li>
-                                                    <li className="flex items-start gap-2">
-                                                        <span className="font-bold min-w-[20px]">3.</span>
-                                                        <span>Enter amount ₹{registrationData.totalAmount} and complete payment</span>
-                                                    </li>
-                                                    <li className="flex items-start gap-2">
-                                                        <span className="font-bold min-w-[20px]">4.</span>
-                                                        <span>Take screenshot of payment success</span>
-                                                    </li>
-                                                    <li className="flex items-start gap-2">
-                                                        <span className="font-bold min-w-[20px]">5.</span>
-                                                        <span>Upload screenshot below to confirm</span>
-                                                    </li>
-                                                </ol>
+                                        {/* Payment Instructions */}
+                                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-4 text-sm">
+                                            <div className="flex items-start gap-2 mb-3">
+                                                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-blue-900 mb-2">How to Pay:</p>
+                                                    <ol className="space-y-2 text-blue-800">
+                                                        <li className="flex items-start gap-2">
+                                                            <span className="font-bold min-w-[20px]">1.</span>
+                                                            <span>Open any UPI app.</span>
+                                                        </li>
+                                                        <li className="flex items-start gap-2">
+                                                            <span className="font-bold min-w-[20px]">2.</span>
+                                                            <span>Scan the QR code above.</span>
+                                                        </li>
+                                                        <li className="flex items-start gap-2">
+                                                            <span className="font-bold min-w-[20px]">3.</span>
+                                                            <span>Enter amount ₹{registrationData.totalAmount} and complete payment.</span>
+                                                        </li>
+                                                        <li className="flex items-start gap-2">
+                                                            <span className="font-bold min-w-[20px]">4.</span>
+                                                            <span>Take screenshot of payment success.</span>
+                                                        </li>
+                                                        <li className="flex items-start gap-2">
+                                                            <span className="font-bold min-w-[20px]">5.</span>
+                                                            <span>Upload screenshot below to confirm.</span>
+                                                        </li>
+                                                    </ol>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <div className="p-6">
-                                    <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                                        <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-2" />
-                                        <p className="text-red-700 font-medium">QR Code not available</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Upload Screenshot Section */}
-                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                            <h2 className="text-xl font-bold text-slate-800 mb-4">
-                                Upload Payment Proof *
-                            </h2>
-
-                            {!paymentScreenshot ? (
-                                <label className="flex flex-col items-center justify-center border-3 border-dashed border-orange-300 rounded-xl p-8 cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-all">
-                                    <Upload className="w-12 h-12 text-orange-500 mb-3" />
-                                    <p className="text-sm font-semibold text-slate-700 mb-1">Upload Screenshot</p>
-                                    <p className="text-xs text-slate-500 text-center">PNG, JPG up to 10MB</p>
-                                    <input
-                                        type="file"
-                                        accept="image/png,image/jpeg,image/jpg"
-                                        onChange={(e) => e.target.files?.[0] && handleScreenshotUpload(e.target.files[0])}
-                                        className="hidden"
-                                    />
-                                </label>
-                            ) : (
-                                <div className="space-y-3">
-                                    <div className="relative border-2 border-green-300 rounded-lg overflow-hidden">
-                                        <img
-                                            src={paymentScreenshot}
-                                            alt="Payment Screenshot"
-                                            className="w-full h-auto"
-                                        />
-                                        <button
-                                            onClick={() => setPaymentScreenshot(null)}
-                                            className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-lg"
-                                        >
-                                            <X className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-green-700 bg-green-50 rounded-lg p-3">
-                                        <CheckCircle className="w-5 h-5" />
-                                        <span className="text-sm font-medium">Screenshot uploaded successfully</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Error Message */}
-                            {error && (
-                                <div className="mt-4 flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800">
-                                    <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                                    <span>{error}</span>
-                                </div>
-                            )}
-
-                            {/* Submit Button */}
-                            <button
-                                onClick={handleSubmitPayment}
-                                disabled={!paymentScreenshot || submitting}
-                                className={`w-full mt-6 px-6 py-4 rounded-lg font-bold text-lg transition-all transform ${!paymentScreenshot || submitting
-                                    ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 hover:scale-105 shadow-lg'
-                                    }`}
-                            >
-                                {submitting ? (
-                                    <span className="flex items-center justify-center gap-2">
-                                        
-                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                        Submitting...
-                                    </span>
                                 ) : (
-                                    'Confirm Payment'
+                                    <div className="p-6">
+                                        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                                            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-2" />
+                                            <p className="text-red-700 font-medium">QR Code not available</p>
+                                        </div>
+                                    </div>
                                 )}
-                            </button>
+                            </div>
+
+                            {/* Upload Screenshot Section */}
+                            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                <h2 className="text-xl font-bold text-slate-800 mb-4">
+                                    Upload Payment Proof *
+                                </h2>
+
+                                {!paymentScreenshot ? (
+                                    <label className="flex flex-col items-center justify-center border-3 border-dashed border-orange-300 rounded-xl p-8 cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-all">
+                                        <Upload className="w-12 h-12 text-orange-500 mb-3" />
+                                        <p className="text-sm font-semibold text-slate-700 mb-1">Upload Screenshot</p>
+                                        <p className="text-xs text-slate-500 text-center">PNG, JPG up to 10MB</p>
+                                        <input
+                                            type="file"
+                                            accept="image/png,image/jpeg,image/jpg"
+                                            onChange={(e) => e.target.files?.[0] && handleScreenshotUpload(e.target.files[0])}
+                                            className="hidden"
+                                        />
+                                    </label>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <div className="relative border-2 border-green-300 rounded-lg overflow-hidden">
+                                            <img
+                                                src={paymentScreenshot}
+                                                alt="Payment Screenshot"
+                                                className="w-full h-auto"
+                                            />
+                                            <button
+                                                onClick={() => setPaymentScreenshot(null)}
+                                                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-lg"
+                                            >
+                                                <X className="w-5 h-5" />
+                                            </button>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-green-700 bg-green-50 rounded-lg p-3">
+                                            <CheckCircle className="w-5 h-5" />
+                                            <span className="text-sm font-medium">Screenshot uploaded successfully</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Error Message */}
+                                {error && (
+                                    <div className="mt-4 flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800">
+                                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                                        <span>{error}</span>
+                                    </div>
+                                )}
+
+                                {/* Submit Button */}
+                                <button
+                                    onClick={handleSubmitPayment}
+                                    disabled={(isPaymentRequired && !paymentScreenshot) || submitting}
+                                    className={`w-full mt-6 px-6 py-4 rounded-lg font-bold text-lg transition-all transform ${!paymentScreenshot || submitting
+                                        ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                                        : 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 hover:scale-105 shadow-lg'
+                                        }`}
+                                >
+                                    {submitting ? (
+                                        <span className="flex items-center justify-center gap-2">
+
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                            Submitting...
+                                        </span>
+                                    ) : (
+                                        'Confirm Booking'
+                                    )}
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
+                    {!isPaymentRequired && (
+                        <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                            <CheckCircle className="w-14 h-14 text-green-600 mx-auto mb-3" />
+                            <h2 className="text-xl font-bold text-slate-800">
+                                No Payment Required
+                            </h2>
+                            <p className="text-slate-600 mt-2">
+                                All devotees are eligible for free darshan.
+                                Please confirm your booking.
+                            </p>
+                            {!isPaymentRequired ? <button className="mt-4 px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white rounded-lg font-bold hover:from-amber-700 hover:to-amber-600 cursor-pointer transition-all">Confirm Booking</button> : ''}
+                        </div>
+                    )}
                 </div>
 
                 {/* Footer Note */}
