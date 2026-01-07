@@ -12,7 +12,7 @@ const positions = [
   'Business Development Consultant',
   'Google Ads Manager',
   'Meta Ads Manager',
-  'Backend Developer (FastAPI / Node.js)',
+  'Backend Developer (FastAPI)',
   'Content Creator / Social Media Manager',
 ];
 
