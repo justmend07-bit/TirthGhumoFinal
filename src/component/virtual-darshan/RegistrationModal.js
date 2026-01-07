@@ -225,6 +225,8 @@ export default function DevoteeRegistration() {
     const day = new Date(dateString).getDay();
     return day === 0 || day === 6;
   };
+  const isWeekendSelected = isWeekend(selectedDate);
+
 
   // Slot booking check (TEMP: nothing is booked)
   const isSlotBooked = (date, timeSlot) => {
@@ -233,9 +235,10 @@ export default function DevoteeRegistration() {
 
   // Slot selection
   const handleTimeSlotClick = (timeSlot) => {
-    if (!selectedDate) return;
+    if (!isWeekendSelected) return;
     setSelectedTime(timeSlot);
   };
+
 
 
   return (
@@ -254,40 +257,44 @@ export default function DevoteeRegistration() {
               </button>
             </div>
             <div className="space-y-4 text-slate-700">
-              <div>
-                <h3 className="font-semibold text-lg mb-2">1. Registration & Darshan</h3>
-                <p>• Only the first darshan/visit is included in the registration.</p>
-                <p>• Additional visits require separate registration and payment.</p>
-              </div>
+  <div>
+    <h3 className="font-semibold text-lg mb-2">1. Registration & Darshan</h3>
+    <p>• Registration fee is ₹39 per person per darshan.</p>
+    <p>
+      • Only the first darshan for senior citizens (60+ years) and persons with
+      disabilities will be free of registration charges.
+    </p>
+  </div>
 
-              <div>
-                <h3 className="font-semibold text-lg mb-2">2. Saarthi (Guide) Arrangements</h3>
-                <p>• Travel expenses for the assigned Saarthi (guide) will be borne by the devotee/user.</p>
-                <p>• Accommodation costs for the Saarthi, will be the responsibility of the devotee/user.</p>
-                <p>• Food and other personal expenses of the Saarthi are to be covered by the devotee/user.</p>
-              </div>
+  <div>
+    <h3 className="font-semibold text-lg mb-2">2. Payment Policy</h3>
+    <p>• Payment is non-refundable once the registration is confirmed.</p>
+  </div>
 
-              <div>
-                <h3 className="font-semibold text-lg mb-2">3. Charges & Payment</h3>
-                <p>• Registration fee: ₹39 per person.</p>
-                <p>• Only first Darshan for Senior citizens (60+ years) and persons with disabilities will be free registration.</p>
-                <p>• Payment is non-refundable once confirmed.</p>
-              </div>
+  <div>
+    <h3 className="font-semibold text-lg mb-2">3. Booking & Cancellation</h3>
+    <p>• Time slots are subject to availability on a first-come, first-served basis.</p>
+    <p>• Cancellations after registration are not allowed.</p>
+    <p>• No-shows will not be eligible for refunds or rescheduling.</p>
+  </div>
 
-              <div>
-                <h3 className="font-semibold text-lg mb-2">4. Booking & Cancellation</h3>
-                <p>• Time slots are subject to availability on a first-come, first-served basis.</p>
-                <p>• Cancellations after registration are not allowed.</p>
-                <p>• No-shows will not be eligible for refunds or rescheduling.</p>
-              </div>
+  <div>
+    <h3 className="font-semibold text-lg mb-2">4. Saarthi (Guide) Arrangements</h3>
+    <p>
+      • Travel and accommodation expenses of the assigned Saarthi (guide) will be
+      borne by the devotee/user.
+    </p>
+  </div>
 
-              <div>
-                <h3 className="font-semibold text-lg mb-2">5. General Terms</h3>
-                <p>• Valid government-issued ID (Aadhaar) is mandatory for all devotees.</p>
-                <p>• Management reserves the right to modify or cancel bookings in case of unforeseen circumstances.</p>
-                <p>• Devotees must follow all temple rules and guidelines during the visit.</p>
-              </div>
-            </div>
+  <div>
+    <h3 className="font-semibold text-lg mb-2">5. General Terms</h3>
+    <p>
+      • Management reserves the right to modify or cancel bookings in case of
+      unforeseen circumstances.
+    </p>
+  </div>
+</div>
+
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setShowTnC(false)}
@@ -532,8 +539,8 @@ export default function DevoteeRegistration() {
                           updateDevotee(devotee.id, 'age', e.target.value)
                         }
                         className={`w-full px-3 py-2 border rounded focus:ring-2 ${errors[`age-${devotee.id}`]
-                            ? 'border-red-500 focus:ring-red-500'
-                            : 'border-slate-300 focus:ring-orange-500'
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'
                           }`}
                       />
 
@@ -556,8 +563,8 @@ export default function DevoteeRegistration() {
                           updateDevotee(devotee.id, 'gender', e.target.value)
                         }
                         className={`w-full px-3 py-2 border rounded focus:ring-2 ${errors[`gender-${devotee.id}`]
-                            ? 'border-red-500 focus:ring-red-500'
-                            : 'border-slate-300 focus:ring-orange-500'
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'
                           }`}
                       >
 
@@ -587,8 +594,8 @@ export default function DevoteeRegistration() {
                           updateDevotee(devotee.id, 'aadhar', value)
                         }}
                         className={`w-full px-3 py-2 border rounded focus:ring-2 ${errors[`aadhar-${devotee.id}`]
-                            ? 'border-red-500 focus:ring-red-500'
-                            : 'border-slate-300 focus:ring-orange-500'
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-slate-300 focus:ring-orange-500'
                           }`}
                       />
 
@@ -607,8 +614,8 @@ export default function DevoteeRegistration() {
                       </label>
                       <label
                         className={`flex items-center justify-center px-3 py-2 border-2 border-dashed rounded cursor-pointer ${errors[`aadharImage-${devotee.id}`]
-                            ? 'border-red-500 bg-red-50'
-                            : 'border-slate-300 hover:border-orange-500'
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-slate-300 hover:border-orange-500'
                           }`}
                       >
 
@@ -877,27 +884,54 @@ export default function DevoteeRegistration() {
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Time Slot *
                     </label>
-                    <div className={`grid grid-cols-2 gap-3 p-2 rounded ${errors.selectedTime ? 'border-2 border-red-500' : ''}`}>
-                      {['6-7 PM', '8-9 PM'].map((timeSlot) => (
-                        <button
-                          key={timeSlot}
-                          type="button"
-                          onClick={() => handleTimeSlotClick(timeSlot)}
-                          className={`px-4 py-2 rounded text-sm font-medium
-                  ${selectedTime === timeSlot
-                              ? 'bg-orange-600 text-white'
-                              : 'bg-white border-2 border-slate-300'}
-                `}
-                        >
-                          {timeSlot}
-                        </button>
-                      ))}
+                    <div
+                      className={`grid grid-cols-2 gap-3 p-2 rounded${errors.selectedTime ? 'border-2 border-red-500' : ''}`}
+                    >
+                      {['6-7 PM', '8-9 PM'].map((timeSlot) => {
+                        const isDisabled = !isWeekendSelected;
+                        const isSelected = selectedTime === timeSlot;
+
+                        return (
+                          <button
+                            key={timeSlot}
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={() => handleTimeSlotClick(timeSlot)}
+                            className={`px-4 py-2 rounded text-sm font-medium transition-all
+                                ${isSelected
+                                ? 'bg-orange-600 text-white'
+                                : isDisabled
+                                  ? `
+                                        bg-gray-200 text-gray-400 border-2 border-gray-300
+                                        cursor-not-allowed opacity-70
+                                      `
+                                  : `
+                                        bg-white text-slate-800 border-2 border-slate-300
+                                        hover:bg-orange-50 hover:border-orange-400
+                                        cursor-pointer
+                                        dark:bg-slate-800 dark:text-slate-100 dark:border-slate-600
+                                        dark:hover:bg-slate-700
+                                      `
+                              }`}
+                          >
+                            {timeSlot}
+                          </button>
+                        );
+                      })}
+
                     </div>
+
                     {errors.selectedTime && (
                       <p className="text-red-600 text-xs mt-1">
                         {errors.selectedTime}
                       </p>
                     )}
+                    {!isWeekendSelected && (
+                      <p className="text-xs text-red-400 dark:text-slate-500 mt-1">
+                        Time slots are available only on weekends (Saturday & Sunday)
+                      </p>
+                    )}
+
                   </div>
                 </div>
               </div>
