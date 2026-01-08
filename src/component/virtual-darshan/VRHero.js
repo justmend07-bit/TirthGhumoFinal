@@ -8,10 +8,18 @@ import {
   Users,
   Heart,
   Smartphone,
-  Home
+  Home,
+  X,
+   ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
+import { useState, useRef } from "react";
+
 const LandingPage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const scrollContainerRefs = useRef({});
+
   const features = [
     {
       icon: <Home className="w-8 h-8" />,
@@ -56,6 +64,45 @@ const LandingPage = () => {
     }
   ];
 
+ const allDestinations = {
+    "Jyotirlingas": [
+      { name: 'SHRI NAGESHWAR JYOTIRLINGA', image: '/images/VR/Nageshwar.jpg' },
+      { name: 'SHRI BHIMASHANKAR', image: '/images/VR/Bhimashankar.jpg' },
+      { name: 'OMKARESHWAR', image: '/images/VR/Omkareshwar.jpeg' },
+      { name: 'SHRI TRIMBAKESHWAR MANDIR', image: '/images/VR/Trimbakeshwar.jpg' },
+      { name: 'SHRI BHOJESHWAR MANDIR', image: '/images/VR/Bhojeshwar.jpg' }
+    ],
+    "Shakti Peethas/Devi Temples": [
+      { name: 'SHRI GADKALIKA MATA', image: '/images/VR/Gadkalika.jpg' },
+      { name: 'MAA SHARDA DEVI', image: '/images/VR/Sharda.jpg' },
+      { name: 'MAA HARSIDDHI DEVI SHAKTIPEETH', image: '/images/VR/Harsiddhi.jpg' },
+      { name: 'MAA BAGLAMUKHI', image: '/images/VR/Baglamukhi.jpg' },
+      { name: 'MAHALAXMI KOLHAPUR', image: '/images/VR/Mahalaxmi.jpg' },
+      { name: 'AMBAJI TEMPLE', image: '/images/VR/Ambaji.jpg' },
+      { name: 'BHADRAKALI SHAKTIPEETH', image: '/images/VR/Bhadrakali.jpg' },
+      { name: 'CHAMUNDA DEVI', image: '/images/VR/Chamunda.jpg' },
+      { name: 'ANNAPOORNA MATA MANDIR', image: '/images/VR/Annapoorna.jpg' }
+    ],
+    "Char Dham & Pilgrimage Circuits": [
+      { name: 'CHAR DHAM PART-1 (YAMUNOTRI)', image: '/images/VR/Yamunotri.jpg' },
+      { name: 'CHAR DHAM PART-2 (GANGOTRI)', image: '/images/VR/Gangotri.jpg' },
+      { name: 'CHAR DHAM PART-3 (KEDARNATH)', image: '/images/VR/Kedarnath.jpg' },
+      { name: 'CHAR DHAM PART-4 (BADRINATH)', image: '/images/VR/Badrinath.jpg' },
+      // { name: 'YAMUNOTRI', image: '/images/VR/Yamunotri.jpg' },
+      // { name: 'BADRINATH', image: '/images/VR/Badrinath.jpg' }
+    ]
+  };
+
+  const scroll = (category, direction) => {
+    const container = scrollContainerRefs.current[category];
+    if (container) {
+      const scrollAmount = container.offsetWidth * 0.8;
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
 
   return (
@@ -176,7 +223,7 @@ const LandingPage = () => {
                   ₹39
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Darsshan Access
+                  Darshan Access
                 </h3>
               </div>
               <p className="text-gray-600">
@@ -235,7 +282,17 @@ const LandingPage = () => {
               </div>
             ))}
           </div>
+          <div className="text-center mt-5">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="cursor-pointer inline-flex items-center gap-2 bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              <MapPin className="w-5 h-5" />
+              See All Destinations
+            </button>
+          </div>
         </div>
+
 
         <div className="text-center bg-gradient-to-br from-orange-500 to-amber-400 rounded-3xl p-14 text-white">
           <Smartphone className="w-16 h-16 mx-auto mb-6 opacity-90" />
@@ -265,6 +322,112 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto ">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div
+              className="fixed inset-0 bg-black/60 bg-opacity-75 transition-opacity -z-10"
+              onClick={() => setIsModalOpen(false)}
+            ></div>
+
+            {/* Modal panel */}
+            <div className="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full ">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-orange-500 to-amber-400 px-6 py-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-3xl font-bold text-white">
+                      All Spiritual Destinations
+                    </h3>
+                    <p className="text-orange-100 mt-1">
+                      Explore our complete collection of sacred places
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors"
+                  >
+                    <X className="w-6 h-6 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="px-4 sm:px-6 py-6 sm:py-8 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto">
+                {Object.entries(allDestinations).map(([category, destinations], categoryIndex) => (
+                  <div key={categoryIndex} className="mb-10 sm:mb-12 last:mb-0">
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
+                      <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 pb-2 border-b-2 border-orange-200 flex-grow">
+                        {category}
+                      </h4>
+                      <div className="flex gap-2 ml-4">
+                        <button
+                          onClick={() => scroll(category, 'left')}
+                          className="bg-orange-100 hover:bg-orange-200 rounded-full p-1.5 sm:p-2 transition-colors"
+                          aria-label="Scroll left"
+                        >
+                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+                        </button>
+                        <button
+                          onClick={() => scroll(category, 'right')}
+                          className="bg-orange-100 hover:bg-orange-200 rounded-full p-1.5 sm:p-2 transition-colors"
+                          aria-label="Scroll right"
+                        >
+                          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div 
+                      ref={(el) => scrollContainerRefs.current[category] = el}
+                      className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
+                      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
+                      
+                      {destinations.map((destination, index) => (
+                        <div
+                          key={index}
+                          className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex-shrink-0 snap-start w-[200px] sm:w-[220px] md:w-[240px]"
+                        >
+                          <div className="aspect-[3/4] overflow-hidden">
+                            <img
+                              src={destination.image}
+                              alt={destination.name}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end">
+                            <div className="p-3 sm:p-4 text-white w-full">
+                              <h5 className="text-sm sm:text-base md:text-lg font-semibold leading-tight">
+                                {destination.name}
+                              </h5>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div className="bg-gray-50 px-6 py-4 flex justify-between items-center">
+                <p className="text-sm text-gray-600">
+                  More destinations coming soon...
+                </p>
+                <a
+                  href="/VR/register"
+                  className="inline-flex w-30 md:w-38 items-center gap-2 bg-orange-600 text-white px-2 md:px-6 py-2 rounded-lg text-xs md:text-sm  font-semibold hover:bg-orange-700 transition-colors"
+                >
+                  Register Now
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

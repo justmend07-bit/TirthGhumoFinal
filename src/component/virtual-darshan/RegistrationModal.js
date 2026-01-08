@@ -27,12 +27,10 @@ const spiritualPlaces = {
     "ANNAPOORNA MATA MANDIR"
   ],
   "Char Dham & Pilgrimage Circuits": [
-    "CHAR DHAM PART-1",
+    "CHAR DHAM PART-1 (YAMUNOTRI)",
     "CHAR DHAM PART-2 (GANGOTRI)",
     "CHAR DHAM PART-3 (KEDARNATH)",
-    "CHAR DHAM PART-4",
-    "YAMUNOTRI",
-    "BADRINATH"
+    "CHAR DHAM PART-4 (BADRINATH)",
   ],
 };
 
