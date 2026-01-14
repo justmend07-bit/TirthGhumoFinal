@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter, Playfair_Display } from 'next/font/google'
 import { Roboto_Slab, Rubik } from 'next/font/google'
-import { ClerkProvider, UserButton } from '@clerk/nextjs';
+// import { ClerkProvider, UserButton } from '@clerk/nextjs';
 import './globals.css'
 
 
