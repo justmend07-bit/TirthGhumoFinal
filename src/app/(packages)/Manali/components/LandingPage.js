@@ -122,6 +122,30 @@ export default function LandingPage() {
     },
   ];
 
+  useEffect(() => {
+    // Clear any previous registration data when landing page loads
+    const clearStorage = () => {
+      sessionStorage.removeItem('manaliRegistration');
+      localStorage.removeItem('manaliRegistrationStep');
+    };
+
+    // Clear on mount
+    clearStorage();
+
+    // Also clear if user navigates back to this page
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+        clearStorage();
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
+
 
   const handleDownloadItinerary = async () => {
     try {
@@ -403,15 +427,15 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="flex justify-center mt-10">
-        <button
-        onClick={handleBookNow}
-        className="bg-orange-500 hover:bg-orange-600 cursor-pointer text-white px-5 xs:px-3 sm:px-5 py-2 sm:py-3  rounded-full text-sm xs:text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 w-60 xs:w-auto"
-      >
-        Secure Your Spot
-      </button>
+          <button
+            onClick={handleBookNow}
+            className="bg-orange-500 hover:bg-orange-600 cursor-pointer text-white px-5 xs:px-3 sm:px-5 py-2 sm:py-3  rounded-full text-sm xs:text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 w-60 xs:w-auto"
+          >
+            Secure Your Spot
+          </button>
+        </div>
       </div>
-      </div>
-      
+
 
 
       {/* Upcoming Batches Section */}
