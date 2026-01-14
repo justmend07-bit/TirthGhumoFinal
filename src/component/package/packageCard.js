@@ -1,74 +1,80 @@
-import { MapPin, Calendar, Users, Star } from 'lucide-react'
+import { MapPin, Clock, Tag } from 'lucide-react';
 
-export default function PackageCard({ pkg }) {
+export function PackageCard({
+  id,
+  title,
+  subtext,
+  isPopular,
+  image,
+  tags,
+  price,
+  available,
+  url,
+  location,
+  duration,
+}) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 w-full">
-      {/* Image */}
-      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+    <div className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full">
+      <div className="relative overflow-hidden h-56">
         <img
-          src={pkg.image || 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=800'}
-          alt={pkg.title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        
-        {/* Price Badge */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 rounded-full bg-amber-500 px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-lg">
-          {pkg.price || '999'}
-        </div>
 
-        {/* Rating */}
-        {pkg.rating && (
-          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 sm:px-3 sm:py-1 backdrop-blur-sm">
-            <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-amber-500 text-amber-500" />
-            <span className="text-xs sm:text-sm font-semibold text-gray-800">{pkg.rating}</span>
+        {isPopular && (
+          <div className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg">
+            Popular
           </div>
         )}
+
+        <div className="absolute bottom-4 right-4 bg-gradient-to-r from-orange-600 to-amber-600 text-white px-4 py-2 rounded-xl text-lg font-bold shadow-lg">
+          {price}
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 sm:p-5 md:p-6">
-        <h3 className="mb-2 sm:mb-3 text-lg sm:text-xl md:text-2xl font-bold text-gray-800 line-clamp-2">
-          {pkg.title}
+      <div className="p-6 flex flex-col flex-grow">
+        <h3 className="text-2xl font-bold text-gray-800 mb-2 leading-tight">
+          {title}
         </h3>
 
-        <div className="mb-3 sm:mb-4 flex items-center gap-1.5 text-xs sm:text-sm text-gray-600">
-          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0" />
-          <span className="line-clamp-1">{pkg.location || 'Exotic Destination'}</span>
+        <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+          {subtext}
+        </p>
+
+        <div className="flex items-center gap-2 text-gray-700 mb-2">
+          <MapPin className="w-4 h-4 text-orange-500 flex-shrink-0" />
+          <span className="text-sm">{location}</span>
         </div>
 
-        {/* Details Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-5">
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
-            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0" />
-            <span className="truncate">{pkg.duration || '7 Days'}</span>
-          </div>
-          {/* <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
-            <Users className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0" />
-            <span className="truncate">{pkg.groupSize || ''}</span>
-          </div> */}
+        <div className="flex items-center gap-2 text-gray-700 mb-4">
+          <Clock className="w-4 h-4 text-orange-500 flex-shrink-0" />
+          <span className="text-sm">{duration}</span>
         </div>
 
-        {/* Description */}
-        {pkg.description && (
-          <p className="mb-4 text-xs sm:text-sm text-gray-600 line-clamp-2 sm:line-clamp-3">
-            {pkg.description}
-          </p>
-        )}
+        {/* <div className="flex items-center gap-2 mb-6 flex-wrap">
+          <Tag className="w-4 h-4 text-orange-500 flex-shrink-0" />
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-xs font-medium border border-amber-200"
+            >
+              {tag}
+            </span>
+          ))}
+        </div> */}
 
-        {/* CTA Button */}
-        {pkg.available ? (
-          <a href={pkg.url} >
-          <button className="w-full rounded-lg sm:rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base font-semibold text-white transition-all hover:from-amber-600 hover:to-orange-700 hover:shadow-lg active:scale-95">
-            View Details
-          </button>
+        <a
+          disabled={!available}
+          href={available ? url : '#'}
+          className={`mt-auto w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 ${available
+              ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 hover:shadow-lg transform hover:scale-105 text-center cursor-pointer'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed text-center '
+            }`}
+        >
+          {available ? 'View Details' : 'coming soon...'}
         </a>
-        ): (
-          <button disabled className="w-full rounded-lg sm:rounded-xl bg-gray-300 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base font-semibold text-gray-500 cursor-not-allowed">
-            Sold Out
-          </button>
-        )}
       </div>
     </div>
-  )
+  );
 }

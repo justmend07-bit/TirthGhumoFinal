@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import HeroSection from "@/component/virtual-darshan/VRHero";
+import Footer from "@/component/footer";
 // import WhyDarshan from "@/component/virtual-darshan/WhyDarshan";
 // import Features from  "@/component/virtual-darshan/Features";
 // import SocialResponsibility from "@/component/virtual-darshan/SocialResponsibility";
@@ -17,6 +18,8 @@ export default function VirtualDarshanPage() {
   return (
     <>
       <HeroSection onRegister={() => setOpen(true)} />
+            <Footer />
+
       {/* <WhyDarshan />
       <Features />
       <SocialResponsibility />

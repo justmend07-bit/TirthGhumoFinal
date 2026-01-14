@@ -7,6 +7,7 @@ import WhyEldersLove from '@/component/AboutSarthi/WhyEldersLove';
 import WhyBecomeSarthi from '@/component/AboutSarthi/WhyBecomeSarthi';
 import WhoCanJoin from '@/component/AboutSarthi/WhoCanJoin';
 import FinalCTA from '@/component/AboutSarthi/FinalCTA';
+import Footer from "@/component/footer";
 export default function SarthiPage() {
 
 
@@ -21,6 +22,8 @@ export default function SarthiPage() {
             <WhyBecomeSarthi />
             <WhoCanJoin />
             <FinalCTA  />
+                  <Footer />
+
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter, Playfair_Display } from 'next/font/google'
 import { Roboto_Slab, Rubik } from 'next/font/google'
-
+import { ClerkProvider, UserButton } from '@clerk/nextjs';
 import './globals.css'
 
 
@@ -47,18 +47,24 @@ export const metadata = {
   description: "A travel website",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, auth }) {
   return (
+    //<ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+      
     <html lang="en" className="">
       <body
         className={ `bg-white text-gray-900 min-h-screen flex flex-col ${rubik.variable} ` }
       >
         <main className="grow">
           {children}
+          {auth}
         </main>
         <FloatingWhatsApp />
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
+
+    //</ ClerkProvider>
+    
   );
 }

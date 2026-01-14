@@ -1,6 +1,30 @@
-import { url } from "zod";
-
-const packages = [
+const packages = [  
+  {
+    id: 3,
+    title: "Manali",
+    subtext: "",
+    isPopular: false,
+    image: "images/packages/Manali.jpg",
+    tags: [ "Special Tents", "Meals Included"],
+    price: "₹10,499",
+    available: true,
+    url: "/Manali",
+    location:"Manali",
+    duration:"6 Days / 5 night"
+  },
+  {
+    id: 2,
+    title: "Tamia",
+    subtext: "",
+    isPopular: false,
+    image: "images/packages/Tamia.webp",
+    tags: [ "Special Tents", "Meals Included"],
+    price: "₹6,700",
+    available: false,
+    url: "/tamia",
+    location:"Tamia",
+    duration:"2 Days"
+  },
     {
     id: 1,
     title: "1 Day Mrignnath Trek",
@@ -11,29 +35,11 @@ const packages = [
     price: "₹939",
     available: false,
     url: "/mrignnath",
+    duration:"1 Day",
+    location:"Mrignnath Budni, Bhopal",
   },
-  {
-    id: 2,
-    title: "Tamia",
-    subtext: "",
-    isPopular: true,
-    image: "images/packages/Tamia.webp",
-    tags: [ "Special Tents", "Meals Included"],
-    price: "₹6,700",
-    available: true,
-    url: "/tamia",
-  },
-  // {
-  //   id: 3,
-  //   title: "Manali",
-  //   subtext: "",
-  //   isPopular: true,
-  //   image: "images/packages/1.png",
-  //   tags: ["Flights", "5-Star Hotel", "Tours"],
-  //   price: "₹8,999",
-  //   available: false,
-  //   url: "/manali",
-  // },
+  
+  
   
   // {
   //   id: 4,

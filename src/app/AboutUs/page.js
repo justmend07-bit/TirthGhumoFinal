@@ -5,6 +5,7 @@ import Ecosystem from '@/component/AboutUs/Ecosystem';
 import MissionVision from '@/component/AboutUs/MissionVision';
 import TrustSection from '@/component/AboutUs/WhyTrust';
 import Navbar from '@/component/navbar';
+import Footer from '@/component/footer';
 
 const About = () => {
   return (
@@ -16,6 +17,8 @@ const About = () => {
       <Ecosystem />
       <MissionVision />
       <TrustSection />
+      <Footer />
+      
     </div>
   );
 };

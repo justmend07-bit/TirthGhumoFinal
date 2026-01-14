@@ -1,12 +1,14 @@
 
 import Navbar from '@/component/navbar';
+import Footer from '@/component/footer';
 import Link from 'next/link';
 import { Briefcase, Heart, Code, Palette, FileText, Video } from 'lucide-react';
 
 function CareersPage() {
 
   return (
-    <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+    <>
+      <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
       <Navbar />
       <div className="max-w-6xl mx-auto">
 
@@ -107,7 +109,11 @@ function CareersPage() {
 
         </div>
       </div>
+      
     </div>
+          <Footer />
+
+    </>
   );
 }
 

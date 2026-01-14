@@ -1,24 +1,12 @@
-"use client";
+import PackagesClient from '@/component/package/packageSection';
+import Footer from '@/component/footer';
 
-import { useState } from "react";
-import Navbar from "@/component/navbar";
-import Hero from "@/component/package/Hero";
-import PackageSection from "@/component/package/packageSection";
-import packages from "@/data/package";
-
-export default function PackagesPage() {
-  const [filteredPackages, setFilteredPackages] = useState(packages);
-
-  // receives results from Hero
-  const handleSearchResults = (results) => {
-    setFilteredPackages(results);
-  };
-
+export default function Page() {
   return (
-    <div className="p-5 ">
-      <Navbar />
-      <Hero onSearch={handleSearchResults} />
-      <PackageSection data={filteredPackages} />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50">
+      <PackagesClient />
+            <Footer />
+
     </div>
   );
 }
