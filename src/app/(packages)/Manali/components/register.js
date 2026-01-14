@@ -54,50 +54,43 @@ export default function RegistrationPage() {
     const [errors, setErrors] = useState({});
 
     // Function to calculate pricing based on current state
-    const calculatePricing = useCallback(async () => {
-        try {
-            setIsLoadingPrice(true);
+    // Function to calculate pricing based on current state
+const calculatePricing = useCallback(async () => {
+    try {
+        setIsLoadingPrice(true);
 
-            const acCount = travelers.filter(t => t.train_preference === 'ac').length;
-            const sleeperCount = travelers.filter(t => t.train_preference === 'non-ac').length;
+        const acCount = travelers.filter(t => t.train_preference === 'ac').length;
+        const sleeperCount = travelers.filter(t => t.train_preference === 'non-ac').length;
 
-            const response = await fetch(`${BackendURL}/manali/price?sleeper=${sleeperCount}&ac=${acCount}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+        const response = await fetch(`${BackendURL}/manali/price?sleeper=${sleeperCount}&ac=${acCount}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch pricing');
-            }
-
-            const data = await response.json();
-            // console.log('Received pricing data:', data);
-
-            // Set total amount directly from backend
-            if (data.amount) {
-                setTotalAmount(data.amount);
-                // console.log('Total amount:', data.amount);
-            }
-
-        } catch (error) {
-            console.error('Failed to fetch pricing:', error);
-            // Fallback pricing logic
-            // const acCount = travelers.filter(t => t.train_preference === 'ac').length;
-            // const sleeperCount = travelers.filter(t => t.train_preference === 'non-ac').length;
-
-            // const totalFallback = (acCount * 6000) + (sleeperCount * 5000);
-            // setTotalAmount(totalFallback);
-        } finally {
-            setIsLoadingPrice(false);
+        if (!response.ok) {
+            throw new Error('Failed to fetch pricing');
         }
-    }, [travelers, BackendURL]);
+
+        const data = await response.json();
+
+        if (data.amount) {
+            setTotalAmount(data.amount);
+        }
+
+    } catch (error) {
+        console.error('Failed to fetch pricing:', error);
+    } finally {
+        setIsLoadingPrice(false);
+    }
+}, [travelers, BackendURL, ]); // Include both travelers array and BackendURL
 
     // Fetch pricing on mount and when dependencies change
-    useEffect(() => {
-        calculatePricing();
-    }, [travelers.length, travelers.map(t => t.train_preference).join(',')]);
+    // Fetch pricing on mount and when dependencies change
+useEffect(() => {
+    calculatePricing();
+}, [calculatePricing, ]); // Only depend on the memoized function
 
     // Load saved data (for edit functionality)
     // Replace the existing load saved data useEffect
@@ -526,7 +519,9 @@ export default function RegistrationPage() {
                                                 if (value === 5) {
                                                     // "More than 4" selected, show input
                                                     setShowCustomInput(true);
+                                                    handleTravelerCountChange(5);
                                                     setTravelerCount(5);
+                                                    
                                                 } else {
                                                     handleTravelerCountChange(value);
                                                 }
@@ -1301,22 +1296,7 @@ export default function RegistrationPage() {
                             </div>
                         </div>
 
-                        {/* INFO BOX */}
-                        {/* <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6 mb-20 sm:mb-0">
-                            <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-2 flex items-center">
-                                <AlertCircle className="w-5 h-5 mr-2 text-blue-500" />
-                                Important Information
-                            </h3>
-                            <ul className="text-xs sm:text-sm text-gray-700 space-y-1">
-                                <li>• All fields marked with <span className="text-red-500">*</span> are mandatory</li>
-                                <li>• Each traveler must provide their own contact number</li>
-                                <li>• Aadhar card upload is optional but recommended for verification</li>
-                                <li>• Institute/College name is optional</li>
-                                <li>• Your form is auto-saved every few seconds</li>
-                                <li>• You will receive booking confirmation within 24 hours after payment verification</li>
-                                <li>• For queries, contact us at tirthghumo@gmail.com or +91 6260499299</li>
-                            </ul>
-                        </div> */}
+                        
                     </form>
                 </div>
             </div>
